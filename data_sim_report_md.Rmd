@@ -2,7 +2,12 @@
 title: "Infant Touchscreen Use and Sleep Problems"
 author: "Jessica Scarborough"
 date: "5/7/2017"
-output: html_document
+output:
+  html_document:
+    theme: journal
+    toc: true
+    toc_depth: 4
+    toc_float: true
 ---
 
 ```{r setup, include=FALSE}
