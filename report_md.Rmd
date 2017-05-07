@@ -1,0 +1,39 @@
+---
+title: "Infant Touchscreen Use and Sleep Problems"
+author: "Jessica Scarborough"
+date: "5/7/2017"
+output:
+  html_document:
+    theme: journal
+    toc: true
+    toc_depth: 4
+    toc_float: true
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Report Description
+
+This report examines data simulation, exporation, and modeling analysis. The exploration portion of the project utilizes data visualization and MANOVA analysis. Modeling will begin with simple regression, and then move to multivariate multiple regression, ending with path analysis. 
+
+# Data Simulation
+
+**Age:**
+```{r}
+age.6_11 <- rnorm(n=134, mean=8.99, sd=1.82)
+age.12_18 <- rnorm(n=215, mean=14.40, sd=2.19)
+age.19_25 <- rnorm(n=179, mean=21.94, sd=2.07)
+age.26_36 <- rnorm(n=187, mean=30.64, sd=3.07)
+```
+
+# Data Exploration
+
+# Modeling
+
+## Basic Regression
+
+## Multivariate Multiple Regression
+
+## Path Analysis
