@@ -14,3 +14,18 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
+# Report Description
+
+This report examines data simulation, exporation, and modeling analysis. The exploration portion of the project utilizes data visualization and MANOVA analysis. Modeling will begin with simple regression, and then move to multivariate multiple regression, ending with path analysis. 
+
+# Data Simulation
+
+# Data Exploration
+
+# Modeling
+
+## Basic Regression
+
+## Multivariate Multiple Regression
+
+## Path Analysis
