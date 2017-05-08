@@ -18,6 +18,24 @@ knitr::opts_chunk$set(echo = TRUE)
 
 This report examines data simulation, exporation, and modeling analysis. The exploration portion of the project utilizes data visualization and MANOVA analysis. Modeling will begin with simple regression, and then move to multivariate multiple regression, ending with path analysis. 
 
+**Predictor variables:**
+
+* Age
+* Gender
+* Background TV
+* Touchscreen use
+* Night-time sleep duration
+* Daytime sleep duration
+* Average number of night awakenings
+* Sleep onset
+
+**Outcome variables:**
+
+* Night-time sleep duration
+* Daytime sleep duration
+* Sleep onset
+* Average number of night awakenings
+
 # Data Simulation
 
 **Count variables:**
@@ -113,6 +131,7 @@ mean(screen.26_36, na.rm = TRUE)
 screentime <- c(screen.6_11, screen.12_18, screen.19_25, screen.26_36)
 ```
 *For each age group*, the following steps were taken: 
+
 1. Use rnorm to simulate data with the total n for the age group, discounting NA's for the time being, because we need the full indices in order to combine into a later df with age. 
 2. Replace negative values with 0. Because this will raise the mean, I lowered the initial mean chosen with rnorm. 
 3. Add in NA values based on the difference in the total n and the n for touchscreen use. 
@@ -154,6 +173,7 @@ sex <- c(sex.6_11, sex.12_18, sex.19_25, sex.26_36)
 ```
 
 *For each age group*, the following steps were taken: 
+
 1. Use rep to create a vector with the total length N with "Female" as each value
 2. Replace "Female" with "Male" based on the percetage of the age group that is male in the original data set
 
@@ -234,6 +254,7 @@ mean(tv.26_36, na.rm=TRUE)
 ```
 
 *For each age group*, the following steps were taken: 
+
 1. Weighted values for each TV sample were created using:
 - (0.8 weight) Ratio of mean background TV and mean touchscreen use * the touchscreen use vector (with imputed mean data where there were previously NAs)
 - (0.2 weight) Mean TV + random noise
