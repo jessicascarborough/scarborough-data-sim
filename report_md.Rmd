@@ -242,8 +242,6 @@ mean(tv.26_36, na.rm=TRUE)
 3. NAs were added based on difference in n for this feature and overall
 
 
-
-**Apendix A** shows an alternative method for simulating background TV. Although the method shown there has mean values that are closer to the original article, it does not take into account the fact that infants who are exposed to more touchscreens are also likely exposed to more TV. 
 # Data Exploration
 
 # Modeling
@@ -257,54 +255,3 @@ mean(tv.26_36, na.rm=TRUE)
 
 # Appendix
 
-## Appendix A: Alternative TV simulation
-
-
-```{r}
-
-tv.6_11 <- rnorm(total.n.6_11, mean=(209.72-10), sd=186.08)
-tv.6_11 <- replace(tv.6_11, tv.6_11<0, 0)
-na.tv.sample <- sample(tv.6_11, 
-                       size=(total.n.6_11-tv.n.6_11), 
-                       replace=FALSE)
-tv.6_11 <- replace(tv.6_11, na.tv.sample, NA)
-mean(tv.6_11, na.rm=TRUE)
-# Final mean falls between 190-220
-
-tv.12_18 <- rnorm(total.n.12_18, mean=(189.62-17), sd=172.70)
-tv.12_18 <- replace(tv.12_18, tv.12_18<0, 0)
-na.tv.sample <- sample(tv.12_18, 
-                       size=(total.n.12_18-tv.n.12_18), 
-                       replace=FALSE)
-tv.12_18 <- replace(tv.12_18, na.tv.sample, NA)
-mean(tv.12_18, na.rm=TRUE)
-# Final mean falls between 170-200
-
-tv.19_25 <- rnorm(total.n.19_25, mean=(187.00-12), sd=162.99)
-tv.19_25 <- replace(tv.19_25, tv.19_25<0, 0)
-na.tv.sample <- sample(tv.19_25, 
-                       size=(total.n.19_25-tv.n.19_25), 
-                       replace=FALSE)
-tv.19_25 <- replace(tv.19_25, na.tv.sample, NA)
-mean(tv.19_25, na.rm=TRUE)
-# Final mean falls between 170-210
-# Larger variation than previous age group because there's a smaller sample size
-
-
-tv.26_36 <- rnorm(total.n.26_36, mean=(219.01-7), sd=175.99)
-tv.26_36 <- replace(tv.26_36, tv.26_36<0, 0)
-na.tv.sample <- sample(tv.26_36, 
-                       size=(total.n.26_36-tv.n.26_36), 
-                       replace=FALSE)
-tv.26_36 <- replace(tv.26_36, na.tv.sample, NA)
-mean(tv.26_36, na.rm=TRUE)
-# Final mean falls between 205-235
-
-```
-
-*For each age group*, the following steps were taken: 
-1. Use rnorm to simulate data with the total n for the age group, discounting NA's for the time being, because we need the full indices in order to combine into a later df with age. 
-2. Replace negative values with 0. Because this will raise the mean, I lowered the initial mean chosen with rnorm. 
-3. Add in NA values based on the difference in the total n and the n for touchscreen use. 
-
-**Note:** The final standard deviation values are not ideal using this procedure, but I decided that staying closer to the true mean (found in the original data set) was more important.
