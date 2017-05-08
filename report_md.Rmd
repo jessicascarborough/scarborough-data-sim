@@ -90,7 +90,6 @@ age <- c(age.6_11, age.12_18, age.19_25, age.26_36)
 # set.seed(0)
 screen.6_11 <- rnorm(n=total.n.6_11, mean=(8.53-4), sd=15.54)
 screen.6_11 <- replace(screen.6_11, screen.6_11<0, 0)
-screen.6_11 <- matrix(screen.6_11)
 screen.6_11[sample(1:length(screen.6_11), 
                     size = (total.n.6_11-screen.n.6_11), replace = FALSE)] <- NA
 sd(screen.6_11, na.rm = TRUE)
@@ -100,7 +99,6 @@ mean(screen.6_11, na.rm = TRUE)
 # set.seed(0)
 screen.12_18 <- rnorm(n=total.n.12_18, mean=(18.80-12), sd=36.83)
 screen.12_18 <- replace(screen.12_18, screen.12_18<0, 0)
-screen.12_18 <- matrix(screen.12_18)
 screen.12_18[sample(1:length(screen.12_18), 
                     size = (total.n.12_18-screen.n.12_18), replace = FALSE)] <- NA
 sd(screen.12_18, na.rm = TRUE)
@@ -111,7 +109,6 @@ mean(screen.12_18, na.rm = TRUE)
 # set.seed(0)
 screen.19_25 <- rnorm(n=total.n.19_25, mean=(25.18-7), sd=37.46)
 screen.19_25 <- replace(screen.19_25, screen.19_25<0, 0)
-screen.19_25 <- matrix(screen.19_25)
 screen.19_25[sample(1:length(screen.19_25), 
                     size = (total.n.19_25-screen.n.19_25), replace = FALSE)] <- NA
 sd(screen.19_25, na.rm = TRUE)
@@ -121,7 +118,6 @@ mean(screen.19_25, na.rm = TRUE)
 # set.seed(0)
 screen.26_36 <- rnorm(n=total.n.26_36, mean=(44.11-4), sd=47.75)
 screen.26_36 <- replace(screen.26_36, screen.26_36<0, 0)
-screen.26_36 <- matrix(screen.26_36)
 screen.26_36[sample(1:length(screen.26_36), 
                     size = (total.n.26_36-screen.n.26_36), replace = FALSE)] <- NA
 sd(screen.26_36, na.rm = TRUE)
@@ -212,7 +208,6 @@ tv_screen_ratio.26_36 <- 219.01/44.11
 
 tv.6_11 <- (0.8)*(impute_screen.6_11 * tv_screen_ratio.6_11) + 
   (0.2)*(tv_mean.6_11 + rnorm(tv.n.6_11, sd=tv_sd.6_11))
-tv.6_11 <- matrix(tv.6_11)
 tv.6_11[sample(1:length(tv.6_11), size=(total.n.6_11-tv.n.6_11), 
                replace = FALSE)] <- NA
 tv.6_11 <- replace(tv.6_11, tv.6_11<0, 0)
@@ -221,7 +216,6 @@ mean(tv.6_11, na.rm=TRUE)
 
 tv.12_18 <- (0.8)*(impute_screen.12_18 * tv_screen_ratio.12_18) + 
   (0.2)*(tv_mean.12_18 + rnorm(tv.n.12_18, sd=tv_sd.12_18))
-tv.12_18 <- matrix(tv.12_18)
 tv.12_18[sample(1:length(tv.12_18), size=(total.n.12_18-tv.n.12_18), 
                 replace = FALSE)] <- NA
 tv.12_18 <- replace(tv.12_18, tv.12_18<0, 0)
@@ -231,7 +225,6 @@ mean(tv.12_18, na.rm=TRUE)
 
 tv.19_25 <- (0.8)*(impute_screen.19_25 * tv_screen_ratio.19_25) + 
   (0.2)*(tv_mean.19_25 + rnorm(tv.n.19_25, sd=tv_sd.19_25))
-tv.19_25 <- matrix(tv.19_25)
 tv.19_25[sample(1:length(tv.19_25), size=(total.n.19_25-tv.n.19_25), 
                 replace = FALSE)] <- NA
 tv.19_25 <- replace(tv.19_25, tv.19_25<0, 0)
@@ -241,7 +234,6 @@ mean(tv.19_25, na.rm=TRUE)
 
 tv.26_36 <- (0.8)*(impute_screen.26_36 * tv_screen_ratio.26_36) + 
   (0.2)*(tv_mean.26_36 + rnorm(tv.n.26_36, sd=tv_sd.26_36))
-tv.26_36 <- matrix(tv.26_36)
 tv.26_36[sample(1:length(tv.26_36), size=(total.n.26_36-tv.n.26_36), 
                 replace = FALSE)] <- NA
 tv.26_36 <- replace(tv.26_36, tv.26_36<0, 0)
