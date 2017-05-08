@@ -245,17 +245,17 @@ ntsleep <- c(ntsleep.6_11, ntsleep.12_18, ntsleep.19_25, ntsleep.26_36)
 daysleep.n.6_11 <- 116
 daysleep.n.12_18 <- 176
 daysleep.n.19_25 <- 132
-daysleep.n.26_36 <- 130
+daysleep.n.26_36 <- 126
 
-daysleep_sd.6_11 <- 64.81
-daysleep_sd.12_18 <- 50.13
-daysleep_sd.19_25 <- 60.12
-daysleep_sd.26_36 <-61.81
+daysleep_sd.6_11 <- 47.27
+daysleep_sd.12_18 <- 38.40
+daysleep_sd.19_25 <- 40.28
+daysleep_sd.26_36 <- 53.20
 
-daysleep_mean.6_11 <- 637.24
-daysleep_mean.12_18 <- 647.24
-daysleep_mean.19_25 <- 651.25
-daysleep_mean.26_36 <- 643.21
+daysleep_mean.6_11 <- 139.05
+daysleep_mean.12_18 <- 122.47
+daysleep_mean.19_25 <- 100.57
+daysleep_mean.26_36 <- 68.25
 
 
 # Ratio values for each age group
@@ -297,6 +297,76 @@ daysleep.26_36 <- replace(daysleep.26_36, daysleep.26_36<0, 0)
 mean(daysleep.26_36, na.rm = TRUE)
 
 daysleep <- c(daysleep.6_11, daysleep.12_18, daysleep.19_25, daysleep.26_36)
+
+# Total sleep
+
+totalsleep <- ntsleep+daysleep
+
+
+# Average number of night awakenings
+
+# Overall values for each age group
+
+wake.n.6_11 <- 116
+wake.n.12_18 <- 177
+wake.n.19_25 <- 133
+wake.n.26_36 <- 130
+
+wake_sd.6_11 <- 1.73
+wake_sd.12_18 <- 1.33
+wake_sd.19_25 <- 1.01
+wake_sd.26_36 <- 0.81
+
+wake_mean.6_11 <- 2
+wake_mean.12_18 <- 1.29
+wake_mean.19_25 <- 0.91
+wake_mean.26_36 <- 0.58
+
+
+# Ratio values for each age group
+wake_screen_ratio.6_11 <- wake_mean.6_11/screen_mean.6_11
+wake_screen_ratio.12_18 <- wake_mean.12_18/screen_mean.12_18
+wake_screen_ratio.19_25 <- wake_mean.19_25/screen_mean.19_25
+wake_screen_ratio.26_36 <- wake_mean.26_36/screen_mean.26_36
+
+
+wake.6_11 <- ceiling((0.8)*(impute_screen.6_11 * wake_screen_ratio.6_11) + 
+  (0.2)*(wake_mean.6_11 + rnorm(wake.n.6_11, sd=wake_sd.6_11)) - 0.55)
+wake.6_11[sample(1:length(wake.6_11), size=(total.n.6_11-wake.n.6_11),
+                     replace = FALSE)] <- NA
+wake.6_11 <- replace(wake.6_11, wake.6_11<0, 0)
+mean(wake.6_11, na.rm = TRUE)
+
+
+wake.12_18 <- ceiling((0.8)*(impute_screen.12_18 * wake_screen_ratio.12_18) + 
+  (0.2)*(wake_mean.12_18 + rnorm(wake.n.12_18, sd=wake_sd.12_18))-0.45)
+wake.12_18[sample(1:length(wake.12_18), size=(total.n.12_18-wake.n.12_18),
+                      replace = FALSE)] <- NA
+wake.12_18 <- replace(wake.12_18, wake.12_18<0, 0)
+mean(wake.12_18, na.rm = TRUE)
+
+
+wake.19_25 <- floor((0.8)*(impute_screen.19_25 * wake_screen_ratio.19_25) + 
+  (0.2)*(wake_mean.19_25 + rnorm(wake.n.19_25, sd=wake_sd.19_25)))
+wake.19_25[sample(1:length(wake.19_25), size=(total.n.19_25-wake.n.19_25),
+                      replace = FALSE)] <- NA
+wake.19_25 <- replace(wake.19_25, wake.19_25<0, 0)
+mean(wake.19_25, na.rm = TRUE)
+
+
+wake.26_36 <- ceiling((0.8)*(impute_screen.26_36 * wake_screen_ratio.26_36) + 
+  (0.2)*(wake_mean.26_36 + rnorm(wake.n.26_36, sd=wake_sd.26_36))+.3)
+wake.26_36[sample(1:length(wake.26_36), size=(total.n.26_36-wake.n.26_36),
+                      replace = FALSE)] <- NA
+wake.26_36 <- replace(wake.26_36, wake.26_36<0, 0)
+mean(wake.26_36, na.rm = TRUE)
+
+wake <- c(wake.6_11, wake.12_18, wake.19_25, wake.26_36)
+
+
+
+
+
 
 
 

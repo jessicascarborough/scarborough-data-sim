@@ -396,6 +396,97 @@ daysleep <- c(daysleep.6_11, daysleep.12_18, daysleep.19_25, daysleep.26_36)
 
 
 ```
+*For each age group*, the following steps were taken: 
+
+1. Weighted values for each daytime sleep duration sample were created using:
+- (0.8 weight) Ratio of mean daytime sleep duration and mean touchscreen use * the touchscreen use vector (with imputed mean data where there were previously NAs)
+- (0.2 weight) Mean daytime sleep duration + random noise
+2. Negative values were set to 0
+-This was beneficial to the final mean values, so the original values were not altered as was seen when this step was taken with touchscreen use
+3. NAs were added based on difference in n for this feature and overall
+
+
+## Total Sleep
+```{r}
+
+totalsleep <- ntsleep+daysleep
+
+```
+
+
+## Average number of night awakenings
+```{r}
+
+# Overall values for each age group
+
+wake.n.6_11 <- 116
+wake.n.12_18 <- 177
+wake.n.19_25 <- 133
+wake.n.26_36 <- 130
+
+wake_sd.6_11 <- 1.73
+wake_sd.12_18 <- 1.33
+wake_sd.19_25 <- 1.01
+wake_sd.26_36 <- 0.81
+
+wake_mean.6_11 <- 2
+wake_mean.12_18 <- 1.29
+wake_mean.19_25 <- 0.91
+wake_mean.26_36 <- 0.58
+
+
+# Ratio values for each age group
+wake_screen_ratio.6_11 <- wake_mean.6_11/screen_mean.6_11
+wake_screen_ratio.12_18 <- wake_mean.12_18/screen_mean.12_18
+wake_screen_ratio.19_25 <- wake_mean.19_25/screen_mean.19_25
+wake_screen_ratio.26_36 <- wake_mean.26_36/screen_mean.26_36
+
+
+wake.6_11 <- ceiling((0.8)*(impute_screen.6_11 * wake_screen_ratio.6_11) + 
+  (0.2)*(wake_mean.6_11 + rnorm(wake.n.6_11, sd=wake_sd.6_11)) - 0.55)
+wake.6_11[sample(1:length(wake.6_11), size=(total.n.6_11-wake.n.6_11),
+                     replace = FALSE)] <- NA
+wake.6_11 <- replace(wake.6_11, wake.6_11<0, 0)
+mean(wake.6_11, na.rm = TRUE)
+
+
+wake.12_18 <- ceiling((0.8)*(impute_screen.12_18 * wake_screen_ratio.12_18) + 
+  (0.2)*(wake_mean.12_18 + rnorm(wake.n.12_18, sd=wake_sd.12_18))-0.45)
+wake.12_18[sample(1:length(wake.12_18), size=(total.n.12_18-wake.n.12_18),
+                      replace = FALSE)] <- NA
+wake.12_18 <- replace(wake.12_18, wake.12_18<0, 0)
+mean(wake.12_18, na.rm = TRUE)
+
+
+wake.19_25 <- floor((0.8)*(impute_screen.19_25 * wake_screen_ratio.19_25) + 
+  (0.2)*(wake_mean.19_25 + rnorm(wake.n.19_25, sd=wake_sd.19_25)))
+wake.19_25[sample(1:length(wake.19_25), size=(total.n.19_25-wake.n.19_25),
+                      replace = FALSE)] <- NA
+wake.19_25 <- replace(wake.19_25, wake.19_25<0, 0)
+mean(wake.19_25, na.rm = TRUE)
+
+
+wake.26_36 <- ceiling((0.8)*(impute_screen.26_36 * wake_screen_ratio.26_36) + 
+  (0.2)*(wake_mean.26_36 + rnorm(wake.n.26_36, sd=wake_sd.26_36))+.3)
+wake.26_36[sample(1:length(wake.26_36), size=(total.n.26_36-wake.n.26_36),
+                      replace = FALSE)] <- NA
+wake.26_36 <- replace(wake.26_36, wake.26_36<0, 0)
+mean(wake.26_36, na.rm = TRUE)
+
+wake <- c(wake.6_11, wake.12_18, wake.19_25, wake.26_36)
+
+```
+*For each age group*, the following steps were taken: 
+
+1. Weighted values for each night-time sleep duration sample were created using:
+  - (0.8 weight) Ratio of mean night-time sleep duration and mean touchscreen use * the touchscreen use vector (with imputed mean data where there were previously NAs)
+  - (0.2 weight) Mean night-time sleep duration + random noise
+  - The floor or ceiling function and an added value that was chosen based on what created a reasonable overall mean value
+2. Negative values were set to 0
+-This was beneficial to the final mean values, so the original values were not altered as was seen when this step was taken with touchscreen use
+3. NAs were added based on difference in n for this feature and overall
+
+
 
 # Data Exploration
 
