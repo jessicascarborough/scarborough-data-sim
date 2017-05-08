@@ -69,38 +69,37 @@ mean(screen.26_36, na.rm = TRUE)
 
 screentime <- c(screen.6_11, screen.12_18, screen.19_25, screen.26_36)
 
+impute_screen.6_11 <- replace(screen.6_11, is.na(screen.6_11), 
+                              mean(screen.6_11, na.rm=TRUE))
+impute_screen.12_18 <- replace(screen.12_18, is.na(screen.12_18), 
+                               mean(screen.12_18, na.rm=TRUE))
+impute_screen.19_25 <- replace(screen.19_25, is.na(screen.19_25), 
+                               mean(screen.19_25, na.rm=TRUE))
+impute_screen.26_36 <- replace(screen.26_36, is.na(screen.26_36), 
+                               mean(screen.26_36, na.rm=TRUE))
 
 # Sex
 
 sex.6_11 <- rep(x = "Female", times = total.n.6_11)
-male_sample.6_11 <- sample(sex.6_11, 
-                           size = ceiling(total.n.6_11*0.5149), 
-                           replace=FALSE)
-sex.6_11 <- replace(sex.6_11, male_sample.6_11, "Male")
-
+sex.6_11[sample(1:length(sex.6_11), size=ceiling(total.n.6_11*0.5149), 
+                replace = FALSE)] <- "Male"
 
 sex.12_18 <- rep(x = "Female", times = total.n.12_18)
-male_sample.12_18 <- sample(sex.12_18, 
-                            size = ceiling(total.n.12_18*0.5302), 
-                            replace=FALSE)
-sex.12_18 <- replace(sex.12_18, male_sample.12_18, "Male")
+sex.12_18[sample(1:length(sex.12_18), size=ceiling(total.n.12_18*0.5302), 
+                 replace = FALSE)] <- "Male"
 
 
 sex.19_25 <- rep(x = "Female", times = total.n.19_25)
-male_sample.19_25 <- sample(sex.19_25, 
-                            size = ceiling(total.n.19_25*0.5587), 
-                            replace=FALSE)
-sex.19_25 <- replace(sex.19_25, male_sample.19_25, "Male")
+sex.19_25[sample(1:length(sex.19_25), size=ceiling(total.n.19_25*0.5587), 
+                 replace = FALSE)] <- "Male"
 
 
 sex.26_36 <- rep(x = "Female", times = total.n.26_36)
-male_sample.26_36 <- sample(sex.26_36, 
-                            size = ceiling(total.n.26_36*0.5134), 
-                            replace=FALSE)
-sex.26_36 <- replace(sex.26_36, male_sample.26_36, "Male")
+sex.26_36[sample(1:length(sex.26_36), size=ceiling(total.n.26_36*0.5134), 
+               replace = FALSE)] <- "Male"
 
 sex <- c(sex.6_11, sex.12_18, sex.19_25, sex.26_36)
-
+length(sex)
 
 # Background TV
 
@@ -143,8 +142,7 @@ screen_sd.26_36 <- 47.75
 tv_mean.all <-200.27
 
 
-impute_screen.6_11 <- replace(screen.6_11, is.na(screen.6_11), 
-                              mean(screen.6_11, na.rm=TRUE))
+
 tv.6_11 <- (0.8)*(impute_screen.6_11 * tv_screen_ratio.6_11) + 
   (0.2)*(tv_mean.6_11 + rnorm(tv.n.6_11, sd=tv_sd.6_11))
 tv.6_11 <- matrix(tv.6_11)
@@ -154,8 +152,6 @@ tv.6_11 <- replace(tv.6_11, tv.6_11<0, 0)
 mean(tv.6_11, na.rm=TRUE)
 
 
-impute_screen.12_18 <- replace(screen.12_18, is.na(screen.12_18), 
-                               mean(screen.12_18, na.rm=TRUE))
 tv.12_18 <- (0.8)*(impute_screen.12_18 * tv_screen_ratio.12_18) + 
   (0.2)*(tv_mean.12_18 + rnorm(tv.n.12_18, sd=tv_sd.12_18))
 tv.12_18 <- matrix(tv.12_18)
@@ -164,8 +160,8 @@ tv.12_18[sample(1:length(tv.12_18), size=(total.n.12_18-tv.n.12_18),
 tv.12_18 <- replace(tv.12_18, tv.12_18<0, 0)
 mean(tv.12_18, na.rm=TRUE)
 
-impute_screen.19_25 <- replace(screen.19_25, is.na(screen.19_25), 
-                               mean(screen.19_25, na.rm=TRUE))
+
+
 tv.19_25 <- (0.8)*(impute_screen.19_25 * tv_screen_ratio.19_25) + 
   (0.2)*(tv_mean.19_25 + rnorm(tv.n.19_25, sd=tv_sd.19_25))
 tv.19_25 <- matrix(tv.19_25)
@@ -176,8 +172,6 @@ mean(tv.19_25, na.rm=TRUE)
 
 
 
-impute_screen.26_36 <- replace(screen.26_36, is.na(screen.26_36), 
-                               mean(screen.26_36, na.rm=TRUE))
 tv.26_36 <- (0.8)*(impute_screen.26_36 * tv_screen_ratio.26_36) + 
   (0.2)*(tv_mean.26_36 + rnorm(tv.n.26_36, sd=tv_sd.26_36))
 tv.26_36 <- matrix(tv.26_36)
@@ -185,6 +179,8 @@ tv.26_36[sample(1:length(tv.26_36), size=(total.n.26_36-tv.n.26_36),
                 replace = FALSE)] <- NA
 tv.26_36 <- replace(tv.26_36, tv.26_36<0, 0)
 mean(tv.26_36, na.rm=TRUE)
+
+
 
 
 
