@@ -105,13 +105,6 @@ tv.n.12_18 <- 194
 tv.n.19_25 <- 145
 tv.n.26_36 <- 151
 
-# Ratio values for each age group
-tv_screen_ratio.all <- 200.27/24.45
-tv_screen_ratio.6_11 <- 209.72/8.53
-tv_screen_ratio.12_18 <- 189.62/18.80
-tv_screen_ratio.19_25 <- 187.00/25.18
-tv_screen_ratio.26_36 <- 219.01/44.11
-
 # TV values for each age group
 
 tv_sd.6_11 <- 186.08
@@ -134,6 +127,13 @@ screen_sd.6_11 <- 15.54
 screen_sd.12_18 <- 36.83
 screen_sd.19_25 <- 37.46
 screen_sd.26_36 <- 47.75
+
+# Ratio values for each age group
+tv_screen_ratio.6_11 <- tv_mean.6_11/screen_mean.6_11
+tv_screen_ratio.12_18 <- tv_mean.12_18/screen_mean.12_18
+tv_screen_ratio.19_25 <- tv_mean.19_25/screen_mean.19_25
+tv_screen_ratio.26_36 <- tv_mean.26_36/screen_mean.26_36
+
 
 tv_mean.all <-200.27
 
@@ -173,10 +173,71 @@ tv.26_36 <- replace(tv.26_36, tv.26_36<0, 0)
 mean(tv.26_36, na.rm=TRUE)
 
 
+## Night-time sleep duration
+
+# Overall values for each age group
+ntsleep.n.6_11 <- 116
+ntsleep.n.12_18 <- 176
+ntsleep.n.19_25 <- 132
+ntsleep.n.26_36 <- 130
+
+ntsleep_sd.6_11 <- 64.81
+ntsleep_sd.12_18 <- 50.13
+ntsleep_sd.19_25 <- 60.12
+ntsleep_sd.26_36 <-61.81
+
+ntsleep_mean.6_11 <- 637.24
+ntsleep_mean.12_18 <- 647.24
+ntsleep_mean.19_25 <- 651.25
+ntsleep_mean.26_36 <- 643.21
 
 
+# Ratio values for each age group
+ntsleep_screen_ratio.6_11 <- ntsleep_mean.6_11/screen_mean.6_11
+ntsleep_screen_ratio.12_18 <- ntsleep_mean.12_18/screen_mean.12_18
+ntsleep_screen_ratio.19_25 <- ntsleep_mean.19_25/screen_mean.19_25
+ntsleep_screen_ratio.26_36 <- ntsleep_mean.26_36/screen_mean.26_36
+
+# 
+# tv.26_36 <- (0.8)*(impute_screen.26_36 * tv_screen_ratio.26_36) + 
+#   (0.2)*(tv_mean.26_36 + rnorm(tv.n.26_36, sd=tv_sd.26_36))
+# tv.26_36[sample(1:length(tv.26_36), size=(total.n.26_36-tv.n.26_36), 
+#                 replace = FALSE)] <- NA
+# tv.26_36 <- replace(tv.26_36, tv.26_36<0, 0)
+# mean(tv.26_36, na.rm=TRUE)
+
+ntsleep.6_11 <- (0.8)*(impute_screen.6_11 * ntsleep_screen_ratio.6_11) + 
+  (0.2)*(ntsleep_mean.6_11 + rnorm(ntsleep.n.6_11, sd=ntsleep_sd.6_11))
+ntsleep.6_11[sample(1:length(ntsleep.6_11), size=(total.n.6_11-ntsleep.n.6_11),
+                    replace = FALSE)] <- NA
+ntsleep.6_11 <- replace(ntsleep.6_11, ntsleep.6_11<0, 0)
+mean(ntsleep.6_11, na.rm = TRUE)
 
 
+ntsleep.12_18 <- (0.8)*(impute_screen.12_18 * ntsleep_screen_ratio.12_18) + 
+  (0.2)*(ntsleep_mean.12_18 + rnorm(ntsleep.n.12_18, sd=ntsleep_sd.12_18))
+ntsleep.12_18[sample(1:length(ntsleep.12_18), size=(total.n.12_18-ntsleep.n.12_18),
+                    replace = FALSE)] <- NA
+ntsleep.12_18 <- replace(ntsleep.12_18, ntsleep.12_18<0, 0)
+mean(ntsleep.12_18, na.rm = TRUE)
+
+
+ntsleep.19_25 <- (0.8)*(impute_screen.19_25 * ntsleep_screen_ratio.19_25) + 
+  (0.2)*(ntsleep_mean.19_25 + rnorm(ntsleep.n.19_25, sd=ntsleep_sd.19_25))
+ntsleep.19_25[sample(1:length(ntsleep.19_25), size=(total.n.19_25-ntsleep.n.19_25),
+                    replace = FALSE)] <- NA
+ntsleep.19_25 <- replace(ntsleep.19_25, ntsleep.19_25<0, 0)
+mean(ntsleep.19_25, na.rm = TRUE)
+
+
+ntsleep.26_36 <- (0.8)*(impute_screen.26_36 * ntsleep_screen_ratio.26_36) + 
+  (0.2)*(ntsleep_mean.26_36 + rnorm(ntsleep.n.26_36, sd=ntsleep_sd.26_36))
+ntsleep.26_36[sample(1:length(ntsleep.26_36), size=(total.n.26_36-ntsleep.n.26_36),
+                    replace = FALSE)] <- NA
+ntsleep.26_36 <- replace(ntsleep.26_36, ntsleep.26_36<0, 0)
+mean(ntsleep.26_36, na.rm = TRUE)
+
+ntsleep <- c(ntsleep.6_11, ntsleep.12_18, ntsleep.19_25, ntsleep.26_36)
 
 # Alternative method for simulating TV, not as good as the final chosen method
 

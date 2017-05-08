@@ -257,7 +257,82 @@ mean(tv.26_36, na.rm=TRUE)
 ```{r}
 
 
+# Overall values for each age group
+ntsleep.n.6_11 <- 116
+ntsleep.n.12_18 <- 176
+ntsleep.n.19_25 <- 132
+ntsleep.n.26_36 <- 130
+
+ntsleep_sd.6_11 <- 64.81
+ntsleep_sd.12_18 <- 50.13
+ntsleep_sd.19_25 <- 60.12
+ntsleep_sd.26_36 <-61.81
+
+ntsleep_mean.6_11 <- 637.24
+ntsleep_mean.12_18 <- 647.24
+ntsleep_mean.19_25 <- 651.25
+ntsleep_mean.26_36 <- 643.21
+
+
+# Ratio values for each age group
+ntsleep_screen_ratio.6_11 <- ntsleep_mean.6_11/screen_mean.6_11
+ntsleep_screen_ratio.12_18 <- ntsleep_mean.12_18/screen_mean.12_18
+ntsleep_screen_ratio.19_25 <- ntsleep_mean.19_25/screen_mean.19_25
+ntsleep_screen_ratio.26_36 <- ntsleep_mean.26_36/screen_mean.26_36
+
+# 
+# tv.26_36 <- (0.8)*(impute_screen.26_36 * tv_screen_ratio.26_36) + 
+#   (0.2)*(tv_mean.26_36 + rnorm(tv.n.26_36, sd=tv_sd.26_36))
+# tv.26_36[sample(1:length(tv.26_36), size=(total.n.26_36-tv.n.26_36), 
+#                 replace = FALSE)] <- NA
+# tv.26_36 <- replace(tv.26_36, tv.26_36<0, 0)
+# mean(tv.26_36, na.rm=TRUE)
+
+ntsleep.6_11 <- (0.8)*(impute_screen.6_11 * ntsleep_screen_ratio.6_11) + 
+  (0.2)*(ntsleep_mean.6_11 + rnorm(ntsleep.n.6_11, sd=ntsleep_sd.6_11))
+ntsleep.6_11[sample(1:length(ntsleep.6_11), size=(total.n.6_11-ntsleep.n.6_11),
+                    replace = FALSE)] <- NA
+ntsleep.6_11 <- replace(ntsleep.6_11, ntsleep.6_11<0, 0)
+mean(ntsleep.6_11, na.rm = TRUE)
+
+
+ntsleep.12_18 <- (0.8)*(impute_screen.12_18 * ntsleep_screen_ratio.12_18) + 
+  (0.2)*(ntsleep_mean.12_18 + rnorm(ntsleep.n.12_18, sd=ntsleep_sd.12_18))
+ntsleep.12_18[sample(1:length(ntsleep.12_18), size=(total.n.12_18-ntsleep.n.12_18),
+                    replace = FALSE)] <- NA
+ntsleep.12_18 <- replace(ntsleep.12_18, ntsleep.12_18<0, 0)
+mean(ntsleep.12_18, na.rm = TRUE)
+
+
+ntsleep.19_25 <- (0.8)*(impute_screen.19_25 * ntsleep_screen_ratio.19_25) + 
+  (0.2)*(ntsleep_mean.19_25 + rnorm(ntsleep.n.19_25, sd=ntsleep_sd.19_25))
+ntsleep.19_25[sample(1:length(ntsleep.19_25), size=(total.n.19_25-ntsleep.n.19_25),
+                    replace = FALSE)] <- NA
+ntsleep.19_25 <- replace(ntsleep.19_25, ntsleep.19_25<0, 0)
+mean(ntsleep.19_25, na.rm = TRUE)
+
+
+ntsleep.26_36 <- (0.8)*(impute_screen.26_36 * ntsleep_screen_ratio.26_36) + 
+  (0.2)*(ntsleep_mean.26_36 + rnorm(ntsleep.n.26_36, sd=ntsleep_sd.26_36))
+ntsleep.26_36[sample(1:length(ntsleep.26_36), size=(total.n.26_36-ntsleep.n.26_36),
+                    replace = FALSE)] <- NA
+ntsleep.26_36 <- replace(ntsleep.26_36, ntsleep.26_36<0, 0)
+mean(ntsleep.26_36, na.rm = TRUE)
+
+ntsleep <- c(ntsleep.6_11, ntsleep.12_18, ntsleep.19_25, ntsleep.26_36)
+
 ```
+*For each age group*, the following steps were taken: 
+
+1. Weighted values for each night-time sleep duration sample were created using:
+- (0.8 weight) Ratio of mean night-time sleep duration and mean touchscreen use * the touchscreen use vector (with imputed mean data where there were previously NAs)
+- (0.2 weight) Mean night-time sleep duration + random noise
+2. Negative values were set to 0
+-This was beneficial to the final mean values, so the original values were not altered as was seen when this step was taken with touchscreen use
+3. NAs were added based on difference in n for this feature and overall
+
+**Note:** It would be possible to simulate this data in the manner used to simulate the screen time data, but I hypothesize that children that are more likely to use touchscreens are also more likely to be exposed to background TV. This is not stated in the article, but is an assumption I am making. If this was not my assumption, then I could simulate this data independent of the touchscreen values, just replicating the mean and SD for each age group
+
 
 # Data Exploration
 
