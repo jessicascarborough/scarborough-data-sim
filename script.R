@@ -44,53 +44,88 @@ hist(age.12_18)
 hist(age.19_25)
 hist(age.26_36)
 
-
+install.packages("truncnorm")
+require(truncnorm)
 
 # Touchscreen Use
+
+# Touchscreen values for each age group
+
+screen.mean.6_11 <- 8.53
+screen.mean.12_18 <- 18.80
+screen.mean.19_25 <- 25.18
+screen.mean.26_36 <- 44.11
+screen.mean.all <- 24.45
+
+screen.sd.6_11 <- 15.54
+screen.sd.12_18 <- 36.83
+screen.sd.19_25 <- 37.46
+screen.sd.26_36 <- 47.75
+screen.sd.all <- 38.98
 
 screen.n.6_11 <- 123
 screen.n.12_18 <- 194
 screen.n.19_25 <- 145
 screen.n.26_36 <- 151
+screen.n.all <- 612
 
 # set.seed(0)
-screen.6_11 <- rnorm(n=total.n.6_11, mean=(8.53-4), sd=15.54)
+
+screen.6_11 <- (0.7)* rnorm(n=total.n.6_11, mean=(screen.mean.6_11-2.5), sd=screen.sd.6_11) + 
+                (0.3)* rnorm(n=total.n.6_11, mean=3, sd=5)
 screen.6_11 <- replace(screen.6_11, screen.6_11<0, 0)
 screen.6_11[sample(1:length(screen.6_11), 
-                    size = (total.n.6_11-screen.n.6_11), replace = FALSE)] <- NA
+                   size = (total.n.6_11-screen.n.6_11), replace = FALSE)] <- NA
+hist(screen.6_11)
 sd(screen.6_11, na.rm = TRUE)
 mean(screen.6_11, na.rm = TRUE)
-# Final mean typically hovers between 8-9
+# Sim mean typically hovers between 6.5-8.5
+# Original mean: 7.53
 
 # set.seed(0)
-screen.12_18 <- rnorm(n=total.n.12_18, mean=(18.80-12), sd=36.83)
+screen.12_18 <- (0.7)* rnorm(n=total.n.12_18, mean=(screen.mean.12_18-4), sd=screen.sd.12_18) + 
+  (0.3)* rnorm(n=total.n.12_18, mean=10, sd=10)
 screen.12_18 <- replace(screen.12_18, screen.12_18<0, 0)
 screen.12_18[sample(1:length(screen.12_18), 
                     size = (total.n.12_18-screen.n.12_18), replace = FALSE)] <- NA
+hist(screen.12_18)
 sd(screen.12_18, na.rm = TRUE)
 mean(screen.12_18, na.rm = TRUE)
-
-# Final mean typically hoers between 17-20
+# Sim mean typically hovers between 17-19.5
+# Original mean: 18.8
 
 # set.seed(0)
+screen.19_25 <- (0.7)* rnorm(n=total.n.19_25, mean=(screen.mean.19_25-7), sd=screen.sd.19_25) + 
+  (0.3)* rnorm(n=total.n.19_25, mean=15, sd=10)
 screen.19_25 <- rnorm(n=total.n.19_25, mean=(25.18-7), sd=37.46)
 screen.19_25 <- replace(screen.19_25, screen.19_25<0, 0)
 screen.19_25[sample(1:length(screen.19_25), 
                     size = (total.n.19_25-screen.n.19_25), replace = FALSE)] <- NA
+hist(screen.19_25)
 sd(screen.19_25, na.rm = TRUE)
 mean(screen.19_25, na.rm = TRUE)
-# Final mean typically hovers between 22-27
+# Final mean typically hovers between 24-28
+# Original mean: 25.18
 
 # set.seed(0)
-screen.26_36 <- rnorm(n=total.n.26_36, mean=(44.11-4), sd=47.75)
+screen.26_36 <- (0.7)* rnorm(n=total.n.26_36, mean=(screen.mean.26_36), sd=screen.sd.26_36) + 
+  (0.3)* rnorm(n=total.n.26_36, mean=40, sd=10)
 screen.26_36 <- replace(screen.26_36, screen.26_36<0, 0)
 screen.26_36[sample(1:length(screen.26_36), 
                     size = (total.n.26_36-screen.n.26_36), replace = FALSE)] <- NA
+hist(screen.26_36)
 sd(screen.26_36, na.rm = TRUE)
 mean(screen.26_36, na.rm = TRUE)
-# Final mean typically hovers between 40-47
+# Final mean typically hovers between 41-48
+# Original mean: 44.11
+
+hist(screen.6_11)
+hist(screen.12_18)
+hist(screen.19_25)
+hist(screen.26_36)
 
 screentime <- c(screen.6_11, screen.12_18, screen.19_25, screen.26_36)
+hist(screentime)
 
 impute_screen.6_11 <- replace(screen.6_11, is.na(screen.6_11), 
                               mean(screen.6_11, na.rm=TRUE))
@@ -144,16 +179,6 @@ tv_mean.12_18 <- 189.62
 tv_mean.19_25 <- 187.00
 tv_mean.26_36 <- 219.01
 
-# Touchscreen mean for each age group
-screen_mean.6_11 <- 8.53
-screen_mean.12_18 <- 18.80
-screen_mean.19_25 <- 25.18
-screen_mean.26_36 <- 44.11
-
-screen_sd.6_11 <- 15.54
-screen_sd.12_18 <- 36.83
-screen_sd.19_25 <- 37.46
-screen_sd.26_36 <- 47.75
 
 # Ratio values for each age group
 tv_screen_ratio.6_11 <- tv_mean.6_11/screen_mean.6_11
@@ -465,7 +490,7 @@ df$age_category[df$age < 12] <- "6-11 months"
 
 library(ggplot2)
 
-ggplot(data=df, aes(x=ntsleep, y=screentime, color=sex)) + 
+ggplot(data=df, aes(x=ntsleep, y=screentime, color=age_category)) + 
   geom_point() + 
   labs(title = "Night-time Sleep vs. Touchscreen Use", 
        y = "Touchscreen Use/Day (minutes)", 
