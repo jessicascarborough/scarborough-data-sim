@@ -169,15 +169,15 @@ tv.n.26_36 <- 151
 
 # TV values for each age group
 
-tv_sd.6_11 <- 186.08
-tv_sd.12_18 <- 172.70
-tv_sd.19_25 <- 162.99
-tv_sd.26_36 <-183.24
+tv.sd.6_11 <- 186.08
+tv.sd.12_18 <- 172.70
+tv.sd.19_25 <- 162.99
+tv.sd.26_36 <-183.24
 
-tv_mean.6_11 <- 209.72
-tv_mean.12_18 <- 189.62
-tv_mean.19_25 <- 187.00
-tv_mean.26_36 <- 219.01
+tv.mean.6_11 <- 209.72
+tv.mean.12_18 <- 189.62
+tv.mean.19_25 <- 187.00
+tv.mean.26_36 <- 219.01
 
 
 # Ratio values for each age group
@@ -196,7 +196,10 @@ tv.6_11 <- (0.6)*(impute_screen.6_11 * tv_screen_ratio.6_11) +
 tv.6_11[sample(1:length(tv.6_11), size=(total.n.6_11-tv.n.6_11), 
                replace = FALSE)] <- NA
 tv.6_11 <- replace(tv.6_11, tv.6_11<0, 0)
+hist(tv.6_11)
 mean(tv.6_11, na.rm=TRUE)
+# Sim mean hovers between: 199-211
+# Original mean: 209.72
 
 
 tv.12_18 <- (0.6)*(impute_screen.12_18 * tv_screen_ratio.12_18) + 
@@ -204,8 +207,10 @@ tv.12_18 <- (0.6)*(impute_screen.12_18 * tv_screen_ratio.12_18) +
 tv.12_18[sample(1:length(tv.12_18), size=(total.n.12_18-tv.n.12_18), 
                 replace = FALSE)] <- NA
 tv.12_18 <- replace(tv.12_18, tv.12_18<0, 0)
+hist(tv.12_18)
 mean(tv.12_18, na.rm=TRUE)
-
+# Sim mean hovers between: 185-196
+# Original mean: 189.62
 
 
 tv.19_25 <- (0.6)*(impute_screen.19_25 * tv_screen_ratio.19_25) + 
@@ -213,18 +218,25 @@ tv.19_25 <- (0.6)*(impute_screen.19_25 * tv_screen_ratio.19_25) +
 tv.19_25[sample(1:length(tv.19_25), size=(total.n.19_25-tv.n.19_25), 
                 replace = FALSE)] <- NA
 tv.19_25 <- replace(tv.19_25, tv.19_25<0, 0)
+hist(tv.19_25)
 mean(tv.19_25, na.rm=TRUE)
-
-
+# Sim mean hovers between: 175-195
+# Original mean: 187.00
 
 tv.26_36 <- (0.6)*(impute_screen.26_36 * tv_screen_ratio.26_36) + 
-  (0.4)*(tv_mean.26_36 + rnorm(tv.n.26_36, sd=tv_sd.26_36))
+  (0.4)*(tv_mean.26_36 + rnorm(tv.n.26_36, mean=-10, sd=tv_sd.26_36))
 tv.26_36[sample(1:length(tv.26_36), size=(total.n.26_36-tv.n.26_36), 
                 replace = FALSE)] <- NA
 tv.26_36 <- replace(tv.26_36, tv.26_36<0, 0)
 mean(tv.26_36, na.rm=TRUE)
+# Sim mean hovers between: 215-225
+# Original mean: 219.01
+
 
 tv <- c(tv.6_11, tv.12_18, tv.19_25, tv.26_36)
+hist(tv)
+
+
 
 ## Night-time sleep duration
 
