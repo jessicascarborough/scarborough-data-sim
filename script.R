@@ -234,63 +234,80 @@ ntsleep.n.12_18 <- 176
 ntsleep.n.19_25 <- 132
 ntsleep.n.26_36 <- 130
 
-ntsleep_sd.6_11 <- 64.81
-ntsleep_sd.12_18 <- 50.13
-ntsleep_sd.19_25 <- 60.12
-ntsleep_sd.26_36 <-61.81
+ntsleep.sd.6_11 <- 64.81
+ntsleep.sd.12_18 <- 50.13
+ntsleep.sd.19_25 <- 60.12
+ntsleep.sd.26_36 <-61.81
 
-ntsleep_mean.6_11 <- 637.24
-ntsleep_mean.12_18 <- 647.24
-ntsleep_mean.19_25 <- 651.25
-ntsleep_mean.26_36 <- 643.21
+ntsleep.mean.6_11 <- 637.24
+ntsleep.mean.12_18 <- 647.24
+ntsleep.mean.19_25 <- 651.25
+ntsleep.mean.26_36 <- 643.21
 
 
 # Ratio values for each age group
-ntsleep_screen_ratio.6_11 <- ntsleep_mean.6_11/screen_mean.6_11
-ntsleep_screen_ratio.12_18 <- ntsleep_mean.12_18/screen_mean.12_18
-ntsleep_screen_ratio.19_25 <- ntsleep_mean.19_25/screen_mean.19_25
-ntsleep_screen_ratio.26_36 <- ntsleep_mean.26_36/screen_mean.26_36
 
-# 
-# tv.26_36 <- (0.8)*(impute_screen.26_36 * tv_screen_ratio.26_36) + 
-#   (0.2)*(tv_mean.26_36 + rnorm(tv.n.26_36, sd=tv_sd.26_36))
-# tv.26_36[sample(1:length(tv.26_36), size=(total.n.26_36-tv.n.26_36), 
-#                 replace = FALSE)] <- NA
-# tv.26_36 <- replace(tv.26_36, tv.26_36<0, 0)
-# mean(tv.26_36, na.rm=TRUE)
 
-ntsleep.6_11 <- (0.6)*(impute_screen.6_11 * ntsleep_screen_ratio.6_11) + 
-  (0.4)*(ntsleep_mean.6_11 + rnorm(ntsleep.n.6_11, sd=ntsleep_sd.6_11))
-ntsleep.6_11[sample(1:length(ntsleep.6_11), size=(total.n.6_11-ntsleep.n.6_11),
+ntsleep_screen_ratio.6_11 <- ntsleep.mean.6_11/screen.mean.6_11
+ntsleep_screen_ratio.12_18 <- ntsleep.mean.12_18/screen.mean.12_18
+ntsleep_screen_ratio.19_25 <- ntsleep.mean.19_25/screen.mean.19_25
+ntsleep_screen_ratio.26_36 <- ntsleep.mean.26_36/screen.mean.26_36
+
+
+ntsleep.6_11 <- rtruncnorm(n=total.n.6_11, a=(ntsleep.mean.6_11-ntsleep.sd.6_11*2), 
+                            b=(ntsleep.mean.6_11+ntsleep.sd.6_11*3),
+                            mean=ntsleep.mean.6_11+30,
+                            sd=ntsleep.sd.6_11) - 
+                0.05*(impute_screen.6_11 * ntsleep_screen_ratio.6_11)
+ntsleep.6_11[sample(1:length(ntsleep.6_11), size=(total.n.6_11-ntsleep.n.6_11), 
+               replace = FALSE)] <- NA
+hist(ntsleep.6_11)
+mean(ntsleep.6_11, na.rm=TRUE)
+# Sim mean hovers around: 633-644
+# Original mean: 637.24
+
+ntsleep.12_18 <- rtruncnorm(n=total.n.12_18, a=(ntsleep.mean.12_18-ntsleep.sd.12_18*2), 
+                           b=(ntsleep.mean.12_18+ntsleep.sd.12_18*3),
+                           mean=ntsleep.mean.12_18+35,
+                           sd=ntsleep.sd.12_18) - 
+                0.05*(impute_screen.12_18 * ntsleep_screen_ratio.12_18)
+ntsleep.12_18[sample(1:length(ntsleep.12_18), size=(total.n.12_18-ntsleep.n.12_18), 
                     replace = FALSE)] <- NA
-ntsleep.6_11 <- replace(ntsleep.6_11, ntsleep.6_11<0, 0)
-mean(ntsleep.6_11, na.rm = TRUE)
+hist(ntsleep.12_18)
+mean(ntsleep.12_18, na.rm=TRUE)
+# Sim mean hovers around: 644-652
+# Original mean: 647.24
 
 
-ntsleep.12_18 <- (0.6)*(impute_screen.12_18 * ntsleep_screen_ratio.12_18) + 
-  (0.4)*(ntsleep_mean.12_18 + rnorm(ntsleep.n.12_18, sd=ntsleep_sd.12_18))
-ntsleep.12_18[sample(1:length(ntsleep.12_18), size=(total.n.12_18-ntsleep.n.12_18),
-                    replace = FALSE)] <- NA
-ntsleep.12_18 <- replace(ntsleep.12_18, ntsleep.12_18<0, 0)
-mean(ntsleep.12_18, na.rm = TRUE)
+ntsleep.19_25 <- rtruncnorm(n=total.n.19_25, a=(ntsleep.mean.19_25-ntsleep.sd.19_25*2), 
+                            b=(ntsleep.mean.19_25+ntsleep.sd.19_25*3),
+                            mean=ntsleep.mean.19_25+35,
+                            sd=ntsleep.sd.19_25) - 
+                0.05*(impute_screen.19_25 * ntsleep_screen_ratio.19_25)
+ntsleep.19_25[sample(1:length(ntsleep.19_25), size=(total.n.19_25-ntsleep.n.19_25), 
+                     replace = FALSE)] <- NA
+hist(ntsleep.19_25)
+mean(ntsleep.19_25, na.rm=TRUE)
+# Sim mean hovers between: 648-654
+# Original mean: 651.25
 
+ntsleep.26_36 <- rtruncnorm(n=total.n.26_36, a=(ntsleep.mean.26_36-ntsleep.sd.26_36*2), 
+                            b=(ntsleep.mean.26_36+ntsleep.sd.26_36*3),
+                            mean=ntsleep.mean.26_36+36,
+                            sd=ntsleep.sd.26_36) - 
+  0.05*(impute_screen.26_36 * ntsleep_screen_ratio.26_36)
+ntsleep.26_36[sample(1:length(ntsleep.26_36), size=(total.n.26_36-ntsleep.n.26_36), 
+                     replace = FALSE)] <- NA
+hist(ntsleep.26_36)
+mean(ntsleep.26_36, na.rm=TRUE)
+# Sim mean hovers around: 641-649
+# Original mean: 643.21
 
-ntsleep.19_25 <- (0.6)*(impute_screen.19_25 * ntsleep_screen_ratio.19_25) + 
-  (0.4)*(ntsleep_mean.19_25 + rnorm(ntsleep.n.19_25, sd=ntsleep_sd.19_25))
-ntsleep.19_25[sample(1:length(ntsleep.19_25), size=(total.n.19_25-ntsleep.n.19_25),
-                    replace = FALSE)] <- NA
-ntsleep.19_25 <- replace(ntsleep.19_25, ntsleep.19_25<0, 0)
-mean(ntsleep.19_25, na.rm = TRUE)
-
-
-ntsleep.26_36 <- (0.6)*(impute_screen.26_36 * ntsleep_screen_ratio.26_36) + 
-  (0.4)*(ntsleep_mean.26_36 + rnorm(ntsleep.n.26_36, sd=ntsleep_sd.26_36))
-ntsleep.26_36[sample(1:length(ntsleep.26_36), size=(total.n.26_36-ntsleep.n.26_36),
-                    replace = FALSE)] <- NA
-ntsleep.26_36 <- replace(ntsleep.26_36, ntsleep.26_36<0, 0)
-mean(ntsleep.26_36, na.rm = TRUE)
 
 ntsleep <- c(ntsleep.6_11, ntsleep.12_18, ntsleep.19_25, ntsleep.26_36)
+hist(ntsleep)
+
+
 
 ## Day-time sleep duration
 
@@ -490,9 +507,10 @@ df$age_category[df$age < 12] <- "6-11 months"
 
 library(ggplot2)
 
-ggplot(data=df, aes(x=ntsleep, y=screentime, color=age_category)) + 
+ggplot(data=df, aes(x=tv, y=screentime, color=age_category)) + 
   geom_point() + 
-  labs(title = "Night-time Sleep vs. Touchscreen Use", 
+  facet_wrap(~age_category) +
+  labs(title = "Background TV vs. Touchscreen Use", 
        y = "Touchscreen Use/Day (minutes)", 
        x = "Night-time Sleep")
 
