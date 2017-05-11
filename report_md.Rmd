@@ -75,6 +75,29 @@ screen.sd.19_25 <- 37.46
 screen.sd.26_36 <- 47.75
 ```
 
+
+
+
+**Onset Variables**:
+```{r}
+onset.n.6_11 <- 116
+onset.n.12_18 <- 177
+onset.n.19_25 <- 131
+onset.n.26_36 <- 130
+
+onset.sd.6_11 <- 23.69
+onset.sd.12_18 <- 16.53
+onset.sd.19_25 <- 16.97
+onset.sd.26_36 <- 27.86
+
+onset.mean.6_11 <- 22.80
+onset.mean.12_18 <- 21.54
+onset.mean.19_25 <- 22.22
+onset.mean.26_36 <- 29.34
+
+
+```
+
 ##Age
 
 I chose to simulate the age data with uniform distribution instead of rnorm, because there's no mention of normal distribution of age in the article. Additionally, normal distribution insinuates that there are very few samples on the lower and upper limits of each age group. This is not indicated in the paper. This makes uniform distribution a better option. 
@@ -111,6 +134,20 @@ hist(age.6_11)
 hist(age.12_18)
 hist(age.19_25)
 hist(age.26_36)
+
+
+# vectors with imputed data for future simulation needs
+
+impute.age.6_11 <- replace(age.6_11, is.na(age.6_11), 
+                              mean(age.6_11, na.rm=TRUE))
+impute.age.12_18 <- replace(age.12_18, is.na(age.12_18), 
+                               mean(age.12_18, na.rm=TRUE))
+impute.age.19_25 <- replace(age.19_25, is.na(age.19_25), 
+                               mean(age.19_25, na.rm=TRUE))
+impute.age.26_36 <- replace(age.26_36, is.na(age.26_36), 
+                               mean(age.26_36, na.rm=TRUE))
+
+
 
 ```
 
@@ -246,15 +283,15 @@ tv_mean.19_25 <- 187.00
 tv_mean.26_36 <- 219.01
 
 # Ratio balues for each age group
-tv_screen_ratio.all <- 200.27/24.45
-tv_screen_ratio.6_11 <- 209.72/8.53
-tv_screen_ratio.12_18 <- 189.62/18.80
-tv_screen_ratio.19_25 <- 187.00/25.18
-tv_screen_ratio.26_36 <- 219.01/44.11
+tv_screen.ratio.all <- 200.27/24.45
+tv_screen.ratio.6_11 <- 209.72/8.53
+tv_screen.ratio.12_18 <- 189.62/18.80
+tv_screen.ratio.19_25 <- 187.00/25.18
+tv_screen.ratio.26_36 <- 219.01/44.11
 
 
 
-tv.6_11 <- (0.6)*(impute_screen.6_11 * tv_screen_ratio.6_11) + 
+tv.6_11 <- (0.6)*(impute_screen.6_11 * tv_screen.ratio.6_11) + 
   (0.4)*(tv_mean.6_11 + rnorm(tv.n.6_11, sd=tv_sd.6_11))
 tv.6_11[sample(1:length(tv.6_11), size=(total.n.6_11-tv.n.6_11), 
                replace = FALSE)] <- NA
@@ -265,7 +302,7 @@ mean(tv.6_11, na.rm=TRUE)
 # Original mean: 209.72
 
 
-tv.12_18 <- (0.6)*(impute_screen.12_18 * tv_screen_ratio.12_18) + 
+tv.12_18 <- (0.6)*(impute_screen.12_18 * tv_screen.ratio.12_18) + 
   (0.4)*(tv_mean.12_18 + rnorm(tv.n.12_18, sd=tv_sd.12_18))
 tv.12_18[sample(1:length(tv.12_18), size=(total.n.12_18-tv.n.12_18), 
                 replace = FALSE)] <- NA
@@ -276,7 +313,7 @@ mean(tv.12_18, na.rm=TRUE)
 # Original mean: 189.62
 
 
-tv.19_25 <- (0.6)*(impute_screen.19_25 * tv_screen_ratio.19_25) + 
+tv.19_25 <- (0.6)*(impute_screen.19_25 * tv_screen.ratio.19_25) + 
   (0.4)*(tv_mean.19_25 + rnorm(tv.n.19_25, sd=tv_sd.19_25))
 tv.19_25[sample(1:length(tv.19_25), size=(total.n.19_25-tv.n.19_25), 
                 replace = FALSE)] <- NA
@@ -286,7 +323,7 @@ mean(tv.19_25, na.rm=TRUE)
 # Sim mean hovers between: 175-195
 # Original mean: 187.00
 
-tv.26_36 <- (0.6)*(impute_screen.26_36 * tv_screen_ratio.26_36) + 
+tv.26_36 <- (0.6)*(impute_screen.26_36 * tv_screen.ratio.26_36) + 
   (0.4)*(tv_mean.26_36 + rnorm(tv.n.26_36, mean=-10, sd=tv_sd.26_36))
 tv.26_36[sample(1:length(tv.26_36), size=(total.n.26_36-tv.n.26_36), 
                 replace = FALSE)] <- NA
@@ -538,10 +575,10 @@ wake.mean.26_36 <- 0.58
 
 
 # Ratio values for each age group
-wake.age_ratio.6_11 <- wake_mean.6_11/age.mean.6_11
-wake.age_ratio.12_18 <- wake_mean.12_18/age.mean.12_18
-wake.age_ratio.19_25 <- wake_mean.19_25/age.mean.19_25
-wake.age_ratio.26_36 <- wake_mean.26_36/age.mean.26_36
+wake.age_ratio.6_11 <- wake.mean.6_11/age.mean.6_11
+wake.age_ratio.12_18 <- wake.mean.12_18/age.mean.12_18
+wake.age_ratio.19_25 <- wake.mean.19_25/age.mean.19_25
+wake.age_ratio.26_36 <- wake.mean.26_36/age.mean.26_36
 
 
 wake.6_11 <- floor(rtruncnorm(n=total.n.6_11, a=(wake.mean.6_11-wake.sd.6_11*2), 
@@ -605,84 +642,99 @@ mean(wake, na.rm=TRUE)
 *For each age group*, the following steps were taken: 
 
 1. Weighted values for each daytime sleep duration sample were created by first creating a truncated normal distribution with a slightly higher mean than the original. 
-2. A formula was used to create a value (in minutes) that was higher for samples with more touchscreen time. This value was multiplied by 0.15 subtracted from sample. It was only minimally influential (although more influential than most variables), because the correlation between age and awakenings was -0.35. This shows that there is some correlation, but it is not particularly strong, so I didn't want to over do it. 
+2. A formula was used to create a value (in minutes) that was *higher for samples with higher age*. Age was chosen in this simulation, because the original study shows that there is no significant correlation between screentime and average number of awakenings.  This value was multiplied by 0.15 and subtracted from sample. It was only minimally influential (although more influential than most variables), because the correlation between age and awakenings was -0.35. This shows that there is some correlation, but it is not particularly strong, so I didn't want to over do it. 
     - Formula: (Age Group Awakenings Mean)/(Age Group Age Mean) * (Sample Age)
 3. NAs were added based on difference in n for this feature and overall
 
 ## Sleep onset
 ```{r}
 
-# Overall values for each age group
-onset.n.6_11 <- 116
-onset.n.12_18 <- 177
-onset.n.19_25 <- 131
-onset.n.26_36 <- 130
-
-onset_sd.6_11 <- 23.69
-onset_sd.12_18 <- 16.53
-onset_sd.19_25 <- 16.97
-onset_sd.26_36 <- 27.86
-
-onset_mean.6_11 <- 22.80
-onset_mean.12_18 <- 21.54
-onset_mean.19_25 <- 22.22
-onset_mean.26_36 <- 29.34
-
 
 # Ratio values for each age group
-onset_screen_ratio.6_11 <- onset_mean.6_11/screen.mean.6_11
-onset_screen_ratio.12_18 <- onset_mean.12_18/screen.mean.12_18
-onset_screen_ratio.19_25 <- onset_mean.19_25/screen.mean.19_25
-onset_screen_ratio.26_36 <- onset_mean.26_36/screen.mean.26_36
+onset.screen_ratio.6_11 <- onset.mean.6_11/screen.mean.6_11
+onset.screen_ratio.12_18 <- onset.mean.12_18/screen.mean.12_18
+onset.screen_ratio.19_25 <- onset.mean.19_25/screen.mean.19_25
+onset.screen_ratio.26_36 <- onset.mean.26_36/screen.mean.26_36
 
 
-onset.6_11 <- (0.8)*(impute_screen.6_11 * onset_screen_ratio.6_11) + 
-  (0.2)*(onset_mean.6_11 + rnorm(onset.n.6_11, sd=onset_sd.6_11))
+
+onset.6_11 <- rtruncnorm(n=total.n.6_11, a=(onset.mean.6_11-onset.sd.6_11*3), 
+                            b=(onset.mean.6_11+onset.sd.6_11*2),
+                            mean=onset.mean.6_11-5,
+                            sd=onset.sd.6_11) + 
+  0.07*(impute_screen.6_11 * onset.screen_ratio.6_11)
 onset.6_11[sample(1:length(onset.6_11), size=(total.n.6_11-onset.n.6_11),
                      replace = FALSE)] <- NA
 onset.6_11 <- replace(onset.6_11, onset.6_11<0, 0)
 mean(onset.6_11, na.rm = TRUE)
+# Simulated mean hovers around: 19.5-23.5
+# Original mean: 22.8
 
 
-onset.12_18 <- (0.8)*(impute_screen.12_18 * onset_screen_ratio.12_18) + 
-  (0.2)*(onset_mean.12_18 + rnorm(onset.n.12_18, sd=onset_sd.12_18))
+onset.12_18 <- rtruncnorm(n=total.n.12_18, a=(onset.mean.12_18-onset.sd.12_18*3), 
+                         b=(onset.mean.12_18+onset.sd.12_18*2),
+                         mean=onset.mean.12_18-3,
+                         sd=onset.sd.12_18) + 
+  0.07*(impute_screen.12_18 * onset.screen_ratio.12_18)
 onset.12_18[sample(1:length(onset.12_18), size=(total.n.12_18-onset.n.12_18),
                       replace = FALSE)] <- NA
 onset.12_18 <- replace(onset.12_18, onset.12_18<0, 0)
 mean(onset.12_18, na.rm = TRUE)
+# Simulated mean hovers around: 19.5-22.5
+# Original mean: 21.54
 
 
-onset.19_25 <- (0.8)*(impute_screen.19_25 * onset_screen_ratio.19_25) + 
-  (0.2)*(onset_mean.19_25 + rnorm(onset.n.19_25, sd=onset_sd.19_25))
+onset.19_25 <- rtruncnorm(n=total.n.19_25, a=(onset.mean.19_25-onset.sd.19_25*3), 
+                         b=(onset.mean.19_25+onset.sd.19_25*2),
+                         mean=onset.mean.19_25-1.5,
+                         sd=onset.sd.19_25) + 
+  0.07*(impute_screen.19_25 * onset.screen_ratio.19_25)
 onset.19_25[sample(1:length(onset.19_25), size=(total.n.19_25-onset.n.19_25),
                       replace = FALSE)] <- NA
 onset.19_25 <- replace(onset.19_25, onset.19_25<0, 0)
 mean(onset.19_25, na.rm = TRUE)
+# Simulated mean hovers around: 20-24
+# Original mean: 22.22
 
 
-onset.26_36 <- (0.8)*(impute_screen.26_36 * onset_screen_ratio.26_36) + 
-  (0.2)*(onset_mean.26_36 + rnorm(onset.n.26_36, sd=onset_sd.26_36))
+onset.26_36 <- rtruncnorm(n=total.n.26_36, a=(onset.mean.26_36-onset.sd.26_36*3), 
+                         b=(onset.mean.26_36+onset.sd.26_36*2),
+                         mean=onset.mean.26_36-3.5,
+                         sd=onset.sd.26_36) + 
+  0.07*(impute_screen.26_36 * onset.screen_ratio.26_36)
 onset.26_36[sample(1:length(onset.26_36), size=(total.n.26_36-onset.n.26_36),
                       replace = FALSE)] <- NA
 onset.26_36 <- replace(onset.26_36, onset.26_36<0, 0)
 mean(onset.26_36, na.rm = TRUE)
+# Simulated mean hovers around: 27-32
+# Original mean: 29.34
+
 
 onset <- c(onset.6_11, onset.12_18, onset.19_25, onset.26_36)
+mean(onset, na.rm=TRUE)
+# Simulated mean: 23.16
+# Original mean: 23.79
 
 ```
 *For each age group*, the following steps were taken: 
 
-1. Weighted values for each sleep onset sample were created using:
-- (0.8 weight) Ratio of mean sleep onset and mean touchscreen use * the touchscreen use vector (with imputed mean data where there were previously NAs)
-- (0.2 weight) Mean sleep onset + random noise
-2. Negative values were set to 0
--This was beneficial to the final mean values, so the original values were not altered as was seen when this step was taken with touchscreen use
+1. Weighted values for each daytime sleep duration sample were created by first creating a truncated normal distribution with a slightly higher mean than the original. 
+2. A formula was used to create a value (in minutes) that was higher for samples with more touchscreen time. This value was multiplied by 0.07 and subtracted from the sample. It was only minimally influential, because the correlation between touchscreen and nighttime sleep was only 0.21. This shows that there is some correlation, but it is not particularly strong, so I didn't want to over do it. 
+    - Formula: (Age Group Daytime Sleep Mean)/(Age Group Screen Use Mean) * (Sample Screen Use)
 3. NAs were added based on difference in n for this feature and overall
-
-
 
 # Data Exploration
 
+```{r}
+shapiro.test(age)
+shapiro.test(tv)
+shapiro.test(screentime)
+shapiro.test(ntsleep)
+shapiro.test(daysleep)
+shapiro.test(wake)
+shapiro.test(onset)
+```
+In the original data, only the nightsleep (ntsleep) and daytime sleep (daysleep) are normally distributed. According to this shapiro wilks test, however, all of my data is normal. Considering that the rest of the metrics are okay, I am okay with this fact. 
 
 
 # Modeling

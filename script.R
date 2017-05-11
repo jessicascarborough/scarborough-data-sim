@@ -37,6 +37,13 @@ age <- c(age.6_11, age.12_18, age.19_25, age.26_36)
 sd(age)
 # sim sd: ~ 8.6
 # original sd: 8.26
+mean(age)
+# Simulated mean: 20.167
+# Original mean: 19.52
+shapiro.test(age)
+# data is normal
+# 2.496e-13
+
 
 hist(age)
 hist(age.6_11)
@@ -141,6 +148,12 @@ hist(screen.26_36)
 
 screentime <- c(screen.6_11, screen.12_18, screen.19_25, screen.26_36)
 hist(screentime)
+mean(screentime, na.rm=TRUE)
+# Simulated mean: 24.5721
+# Original mean: 24.45
+shapiro.test(screentime)
+# data is normal
+# p-value < 2.2 e -16
 
 impute_screen.6_11 <- replace(screen.6_11, is.na(screen.6_11), 
                               mean(screen.6_11, na.rm=TRUE))
@@ -196,17 +209,17 @@ tv.mean.26_36 <- 219.01
 
 
 # Ratio values for each age group
-tv_screen_ratio.6_11 <- tv_mean.6_11/screen_mean.6_11
-tv_screen_ratio.12_18 <- tv_mean.12_18/screen_mean.12_18
-tv_screen_ratio.19_25 <- tv_mean.19_25/screen_mean.19_25
-tv_screen_ratio.26_36 <- tv_mean.26_36/screen_mean.26_36
+tv_screen.ratio.6_11 <- tv_mean.6_11/screen_mean.6_11
+tv_screen.ratio.12_18 <- tv_mean.12_18/screen_mean.12_18
+tv_screen.ratio.19_25 <- tv_mean.19_25/screen_mean.19_25
+tv_screen.ratio.26_36 <- tv_mean.26_36/screen_mean.26_36
 
 
 tv_mean.all <-200.27
 
 
 
-tv.6_11 <- (0.6)*(impute_screen.6_11 * tv_screen_ratio.6_11) + 
+tv.6_11 <- (0.6)*(impute_screen.6_11 * tv_screen.ratio.6_11) + 
   (0.4)*(tv_mean.6_11 + rnorm(tv.n.6_11, sd=tv_sd.6_11))
 tv.6_11[sample(1:length(tv.6_11), size=(total.n.6_11-tv.n.6_11), 
                replace = FALSE)] <- NA
@@ -217,7 +230,7 @@ mean(tv.6_11, na.rm=TRUE)
 # Original mean: 209.72
 
 
-tv.12_18 <- (0.6)*(impute_screen.12_18 * tv_screen_ratio.12_18) + 
+tv.12_18 <- (0.6)*(impute_screen.12_18 * tv_screen.ratio.12_18) + 
   (0.4)*(tv_mean.12_18 + rnorm(tv.n.12_18, sd=tv_sd.12_18))
 tv.12_18[sample(1:length(tv.12_18), size=(total.n.12_18-tv.n.12_18), 
                 replace = FALSE)] <- NA
@@ -228,7 +241,7 @@ mean(tv.12_18, na.rm=TRUE)
 # Original mean: 189.62
 
 
-tv.19_25 <- (0.6)*(impute_screen.19_25 * tv_screen_ratio.19_25) + 
+tv.19_25 <- (0.6)*(impute_screen.19_25 * tv_screen.ratio.19_25) + 
   (0.4)*(tv_mean.19_25 + rnorm(tv.n.19_25, sd=tv_sd.19_25))
 tv.19_25[sample(1:length(tv.19_25), size=(total.n.19_25-tv.n.19_25), 
                 replace = FALSE)] <- NA
@@ -238,7 +251,7 @@ mean(tv.19_25, na.rm=TRUE)
 # Sim mean hovers between: 175-195
 # Original mean: 187.00
 
-tv.26_36 <- (0.6)*(impute_screen.26_36 * tv_screen_ratio.26_36) + 
+tv.26_36 <- (0.6)*(impute_screen.26_36 * tv_screen.ratio.26_36) + 
   (0.4)*(tv_mean.26_36 + rnorm(tv.n.26_36, mean=-10, sd=tv_sd.26_36))
 tv.26_36[sample(1:length(tv.26_36), size=(total.n.26_36-tv.n.26_36), 
                 replace = FALSE)] <- NA
@@ -250,8 +263,12 @@ mean(tv.26_36, na.rm=TRUE)
 
 tv <- c(tv.6_11, tv.12_18, tv.19_25, tv.26_36)
 hist(tv)
-
-
+mean(tv, na.rm=TRUE)
+# Simulated mean: 203.1756
+# Original mean: 200.27
+shapiro.test(tv)
+# data is normal
+# p = 9.042e-13
 
 ## Night-time sleep duration
 
@@ -333,8 +350,12 @@ mean(ntsleep.26_36, na.rm=TRUE)
 
 ntsleep <- c(ntsleep.6_11, ntsleep.12_18, ntsleep.19_25, ntsleep.26_36)
 hist(ntsleep)
-
-
+mean(ntsleep, na.rm=TRUE)
+# Simulated mean: 646.496
+# Original mean: 645.16
+shapiro.test(ntsleep)
+# data is normal
+# p-value = 1.271e-07
 
 ## Day-time sleep duration
 
@@ -419,6 +440,9 @@ hist(daysleep)
 mean(daysleep, na.rm=TRUE)
 # Simulated mean: 106.32
 # Original mean: 108.29
+shapiro.test(daysleep)
+# Data is normal 
+# p-value = 0.003424
 
 # Total sleep
 
@@ -515,6 +539,9 @@ wake <- c(wake.6_11, wake.12_18, wake.19_25, wake.26_36)
 mean(wake, na.rm=TRUE)
 # Sim mean: 1.23
 # Original mean: 1.17
+shapiro.test(wake)
+# Data is normal
+# p-value < 2.2e-16
 
 # Sleep onset
 
@@ -524,56 +551,86 @@ onset.n.12_18 <- 177
 onset.n.19_25 <- 131
 onset.n.26_36 <- 130
 
-onset_sd.6_11 <- 23.69
-onset_sd.12_18 <- 16.53
-onset_sd.19_25 <- 16.97
-onset_sd.26_36 <- 27.86
+onset.sd.6_11 <- 23.69
+onset.sd.12_18 <- 16.53
+onset.sd.19_25 <- 16.97
+onset.sd.26_36 <- 27.86
 
-onset_mean.6_11 <- 22.80
-onset_mean.12_18 <- 21.54
-onset_mean.19_25 <- 22.22
-onset_mean.26_36 <- 29.34
+onset.mean.6_11 <- 22.80
+onset.mean.12_18 <- 21.54
+onset.mean.19_25 <- 22.22
+onset.mean.26_36 <- 29.34
 
 
 # Ratio values for each age group
-onset_screen_ratio.6_11 <- onset_mean.6_11/screen_mean.6_11
-onset_screen_ratio.12_18 <- onset_mean.12_18/screen_mean.12_18
-onset_screen_ratio.19_25 <- onset_mean.19_25/screen_mean.19_25
-onset_screen_ratio.26_36 <- onset_mean.26_36/screen_mean.26_36
+onset.screen_ratio.6_11 <- onset.mean.6_11/screen.mean.6_11
+onset.screen_ratio.12_18 <- onset.mean.12_18/screen.mean.12_18
+onset.screen_ratio.19_25 <- onset.mean.19_25/screen.mean.19_25
+onset.screen_ratio.26_36 <- onset.mean.26_36/screen.mean.26_36
 
 
-onset.6_11 <- (0.6)*(impute_screen.6_11 * onset_screen_ratio.6_11) + 
-  (0.4)*(onset_mean.6_11 + rnorm(onset.n.6_11, sd=onset_sd.6_11))
+
+onset.6_11 <- rtruncnorm(n=total.n.6_11, a=(onset.mean.6_11-onset.sd.6_11), 
+                            b=(onset.mean.6_11+onset.sd.6_11),
+                            mean=onset.mean.6_11-5,
+                            sd=onset.sd.6_11) + 
+  0.07*(impute_screen.6_11 * onset.screen_ratio.6_11)
 onset.6_11[sample(1:length(onset.6_11), size=(total.n.6_11-onset.n.6_11),
                      replace = FALSE)] <- NA
 onset.6_11 <- replace(onset.6_11, onset.6_11<0, 0)
 mean(onset.6_11, na.rm = TRUE)
+# Simulated mean hovers around: 19.5-23.5
+# Original mean: 22.8
 
 
-onset.12_18 <- (0.6)*(impute_screen.12_18 * onset_screen_ratio.12_18) + 
-  (0.4)*(onset_mean.12_18 + rnorm(onset.n.12_18, sd=onset_sd.12_18))
+onset.12_18 <- rtruncnorm(n=total.n.12_18, a=(onset.mean.12_18-onset.sd.12_18), 
+                         b=(onset.mean.12_18+onset.sd.12_18),
+                         mean=onset.mean.12_18-4.5,
+                         sd=onset.sd.12_18) + 
+  0.07*(impute_screen.12_18 * onset.screen_ratio.12_18)
 onset.12_18[sample(1:length(onset.12_18), size=(total.n.12_18-onset.n.12_18),
                       replace = FALSE)] <- NA
 onset.12_18 <- replace(onset.12_18, onset.12_18<0, 0)
 mean(onset.12_18, na.rm = TRUE)
+# Simulated mean hovers around: 19.5-22.5
+# Original mean: 21.54
 
 
-onset.19_25 <- (0.6)*(impute_screen.19_25 * onset_screen_ratio.19_25) + 
-  (0.4)*(onset_mean.19_25 + rnorm(onset.n.19_25, sd=onset_sd.19_25))
+onset.19_25 <- rtruncnorm(n=total.n.19_25, a=(onset.mean.19_25-onset.sd.19_25), 
+                         b=(onset.mean.19_25+onset.sd.19_25),
+                         mean=onset.mean.19_25-2.5,
+                         sd=onset.sd.19_25) + 
+  0.07*(impute_screen.19_25 * onset.screen_ratio.19_25)
 onset.19_25[sample(1:length(onset.19_25), size=(total.n.19_25-onset.n.19_25),
                       replace = FALSE)] <- NA
 onset.19_25 <- replace(onset.19_25, onset.19_25<0, 0)
 mean(onset.19_25, na.rm = TRUE)
+# Simulated mean hovers around: 20-24
+# Original mean: 22.22
 
 
-onset.26_36 <- (0.6)*(impute_screen.26_36 * onset_screen_ratio.26_36) + 
-  (0.4)*(onset_mean.26_36 + rnorm(onset.n.26_36, sd=onset_sd.26_36))
+onset.26_36 <- rtruncnorm(n=total.n.26_36, a=(onset.mean.26_36-onset.sd.26_36), 
+                         b=(onset.mean.26_36+onset.sd.26_36),
+                         mean=onset.mean.26_36-4.5,
+                         sd=onset.sd.26_36) + 
+  0.07*(impute_screen.26_36 * onset.screen_ratio.26_36)
 onset.26_36[sample(1:length(onset.26_36), size=(total.n.26_36-onset.n.26_36),
                       replace = FALSE)] <- NA
 onset.26_36 <- replace(onset.26_36, onset.26_36<0, 0)
 mean(onset.26_36, na.rm = TRUE)
+# Simulated mean hovers around: 27-32
+# Original mean: 29.34
+
 
 onset <- c(onset.6_11, onset.12_18, onset.19_25, onset.26_36)
+hist(onset)
+mean(onset, na.rm=TRUE)
+# Simulated mean: 23.16
+# Original mean: 23.79
+shapiro.test(onset)
+# Data is normal
+# p-value = 6.551e-09
+
 
 
 df <- data.frame(age, sex, tv, screentime, ntsleep, daysleep, totalsleep, wake, onset)
@@ -588,12 +645,17 @@ df$age_category[df$age < 12] <- "6-11 months"
 
 library(ggplot2)
 
-ggplot(data=df, aes(x=tv, y=screentime, color=age_category)) + 
-  geom_point() + 
-  facet_wrap(~age_category) +
+ggplot(data=df, aes(x=screentime, y=daysleep, color=age_category)) + 
+  geom_point() +
   labs(title = "Background TV vs. Touchscreen Use", 
-       y = "Touchscreen Use/Day (minutes)", 
-       x = "Night-time Sleep")
+       y = "Day time sleep (minutes)", 
+       x = "Touch Screen Time")
+
+ggplot(data=df, aes(x=tv, y=wake, color=age_category)) + 
+  geom_point() +
+  labs(title = "Background TV vs. Touchscreen Use", 
+       y = "Avg. Number of Awakenings", 
+       x = "Background TV")
 
 ggplot(data=df, aes(x=screentime, color=age_category, fill=age_category)) + 
   geom_density(alpha=0.5) + 
