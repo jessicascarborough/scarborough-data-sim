@@ -44,6 +44,21 @@ hist(age.12_18)
 hist(age.19_25)
 hist(age.26_36)
 
+
+
+impute.age.6_11 <- replace(age.6_11, is.na(age.6_11), 
+                              mean(age.6_11, na.rm=TRUE))
+impute.age.12_18 <- replace(age.12_18, is.na(age.12_18), 
+                               mean(age.12_18, na.rm=TRUE))
+impute.age.19_25 <- replace(age.19_25, is.na(age.19_25), 
+                               mean(age.19_25, na.rm=TRUE))
+impute.age.26_36 <- replace(age.26_36, is.na(age.26_36), 
+                               mean(age.26_36, na.rm=TRUE))
+
+
+
+
+
 install.packages("truncnorm")
 require(truncnorm)
 
@@ -268,51 +283,51 @@ ntsleep_screen_ratio.26_36 <- ntsleep.mean.26_36/screen.mean.26_36
 
 ntsleep.6_11 <- rtruncnorm(n=total.n.6_11, a=(ntsleep.mean.6_11-ntsleep.sd.6_11*2), 
                             b=(ntsleep.mean.6_11+ntsleep.sd.6_11*3),
-                            mean=ntsleep.mean.6_11+30,
+                            mean=ntsleep.mean.6_11+50,
                             sd=ntsleep.sd.6_11) - 
-                0.05*(impute_screen.6_11 * ntsleep_screen_ratio.6_11)
+                0.08*(impute_screen.6_11 * ntsleep_screen_ratio.6_11)
 ntsleep.6_11[sample(1:length(ntsleep.6_11), size=(total.n.6_11-ntsleep.n.6_11), 
                replace = FALSE)] <- NA
 hist(ntsleep.6_11)
 mean(ntsleep.6_11, na.rm=TRUE)
-# Sim mean hovers around: 633-644
+# Sim mean hovers around: 632-643
 # Original mean: 637.24
 
 ntsleep.12_18 <- rtruncnorm(n=total.n.12_18, a=(ntsleep.mean.12_18-ntsleep.sd.12_18*2), 
                            b=(ntsleep.mean.12_18+ntsleep.sd.12_18*3),
-                           mean=ntsleep.mean.12_18+35,
+                           mean=ntsleep.mean.12_18+60,
                            sd=ntsleep.sd.12_18) - 
-                0.05*(impute_screen.12_18 * ntsleep_screen_ratio.12_18)
+                0.08*(impute_screen.12_18 * ntsleep_screen_ratio.12_18)
 ntsleep.12_18[sample(1:length(ntsleep.12_18), size=(total.n.12_18-ntsleep.n.12_18), 
                     replace = FALSE)] <- NA
 hist(ntsleep.12_18)
 mean(ntsleep.12_18, na.rm=TRUE)
-# Sim mean hovers around: 644-652
+# Sim mean hovers around: 639-656
 # Original mean: 647.24
 
 
 ntsleep.19_25 <- rtruncnorm(n=total.n.19_25, a=(ntsleep.mean.19_25-ntsleep.sd.19_25*2), 
                             b=(ntsleep.mean.19_25+ntsleep.sd.19_25*3),
-                            mean=ntsleep.mean.19_25+35,
+                            mean=ntsleep.mean.19_25+50,
                             sd=ntsleep.sd.19_25) - 
-                0.05*(impute_screen.19_25 * ntsleep_screen_ratio.19_25)
+                0.08*(impute_screen.19_25 * ntsleep_screen_ratio.19_25)
 ntsleep.19_25[sample(1:length(ntsleep.19_25), size=(total.n.19_25-ntsleep.n.19_25), 
                      replace = FALSE)] <- NA
 hist(ntsleep.19_25)
 mean(ntsleep.19_25, na.rm=TRUE)
-# Sim mean hovers between: 648-654
+# Sim mean hovers between: 641-658
 # Original mean: 651.25
 
 ntsleep.26_36 <- rtruncnorm(n=total.n.26_36, a=(ntsleep.mean.26_36-ntsleep.sd.26_36*2), 
                             b=(ntsleep.mean.26_36+ntsleep.sd.26_36*3),
-                            mean=ntsleep.mean.26_36+36,
+                            mean=ntsleep.mean.26_36+56,
                             sd=ntsleep.sd.26_36) - 
-  0.05*(impute_screen.26_36 * ntsleep_screen_ratio.26_36)
+  0.08*(impute_screen.26_36 * ntsleep_screen_ratio.26_36)
 ntsleep.26_36[sample(1:length(ntsleep.26_36), size=(total.n.26_36-ntsleep.n.26_36), 
                      replace = FALSE)] <- NA
 hist(ntsleep.26_36)
 mean(ntsleep.26_36, na.rm=TRUE)
-# Sim mean hovers around: 641-649
+# Sim mean hovers around: 638-651
 # Original mean: 643.21
 
 
@@ -329,56 +344,81 @@ daysleep.n.12_18 <- 176
 daysleep.n.19_25 <- 132
 daysleep.n.26_36 <- 126
 
-daysleep_sd.6_11 <- 47.27
-daysleep_sd.12_18 <- 38.40
-daysleep_sd.19_25 <- 40.28
-daysleep_sd.26_36 <- 53.20
+daysleep.sd.6_11 <- 47.27
+daysleep.sd.12_18 <- 38.40
+daysleep.sd.19_25 <- 40.28
+daysleep.sd.26_36 <- 53.20
 
-daysleep_mean.6_11 <- 139.05
-daysleep_mean.12_18 <- 122.47
-daysleep_mean.19_25 <- 100.57
-daysleep_mean.26_36 <- 68.25
+daysleep.mean.6_11 <- 139.05
+daysleep.mean.12_18 <- 122.47
+daysleep.mean.19_25 <- 100.57
+daysleep.mean.26_36 <- 68.25
 
 
 # Ratio values for each age group
-daysleep_screen_ratio.6_11 <- daysleep_mean.6_11/screen_mean.6_11
-daysleep_screen_ratio.12_18 <- daysleep_mean.12_18/screen_mean.12_18
-daysleep_screen_ratio.19_25 <- daysleep_mean.19_25/screen_mean.19_25
-daysleep_screen_ratio.26_36 <- daysleep_mean.26_36/screen_mean.26_36
+daysleep.screen_ratio.6_11 <- daysleep.mean.6_11/screen.mean.6_11
+daysleep.screen_ratio.12_18 <- daysleep.mean.12_18/screen.mean.12_18
+daysleep.screen_ratio.19_25 <- daysleep.mean.19_25/screen.mean.19_25
+daysleep.screen_ratio.26_36 <- daysleep.mean.26_36/screen.mean.26_36
 
 
-daysleep.6_11 <- (0.6)*(impute_screen.6_11 * daysleep_screen_ratio.6_11) + 
-  (0.4)*(daysleep_mean.6_11 + rnorm(daysleep.n.6_11, sd=daysleep_sd.6_11))
+daysleep.6_11 <- rtruncnorm(n=total.n.6_11, a=(daysleep.mean.6_11-daysleep.sd.6_11*3), 
+                            b=(daysleep.mean.6_11+daysleep.sd.6_11*2),
+                            mean=daysleep.mean.6_11-5,
+                            sd=daysleep.sd.6_11) + 
+            0.05*(impute_screen.6_11 * daysleep.screen_ratio.6_11)
 daysleep.6_11[sample(1:length(daysleep.6_11), size=(total.n.6_11-daysleep.n.6_11),
                     replace = FALSE)] <- NA
 daysleep.6_11 <- replace(daysleep.6_11, daysleep.6_11<0, 0)
 mean(daysleep.6_11, na.rm = TRUE)
+# Simulated mean hovers around: 128-144
+# Original mean: 139.05
 
 
-daysleep.12_18 <- (0.6)*(impute_screen.12_18 * daysleep_screen_ratio.12_18) + 
-  (0.4)*(daysleep_mean.12_18 + rnorm(daysleep.n.12_18, sd=daysleep_sd.12_18))
+daysleep.12_18 <- rtruncnorm(n=total.n.12_18, a=(daysleep.mean.12_18-daysleep.sd.12_18*3), 
+                            b=(daysleep.mean.12_18+daysleep.sd.12_18*2),
+                            mean=daysleep.mean.12_18-5,
+                            sd=daysleep.sd.12_18) + 
+  0.05*(impute_screen.12_18 * daysleep.screen_ratio.12_18)
 daysleep.12_18[sample(1:length(daysleep.12_18), size=(total.n.12_18-daysleep.n.12_18),
                      replace = FALSE)] <- NA
 daysleep.12_18 <- replace(daysleep.12_18, daysleep.12_18<0, 0)
 mean(daysleep.12_18, na.rm = TRUE)
+# Simulated mean hovers around: 120-125
+# Original mean: 122.47
 
 
-daysleep.19_25 <- (0.6)*(impute_screen.19_25 * daysleep_screen_ratio.19_25) + 
-  (0.4)*(daysleep_mean.19_25 + rnorm(daysleep.n.19_25, sd=daysleep_sd.19_25))
+daysleep.19_25 <- rtruncnorm(n=total.n.19_25, a=(daysleep.mean.19_25-daysleep.sd.19_25*3), 
+                             b=(daysleep.mean.19_25+daysleep.sd.19_25*2),
+                             mean=daysleep.mean.19_25-5,
+                             sd=daysleep.sd.19_25) + 
+  0.05*(impute_screen.19_25 * daysleep.screen_ratio.19_25)
 daysleep.19_25[sample(1:length(daysleep.19_25), size=(total.n.19_25-daysleep.n.19_25),
                      replace = FALSE)] <- NA
 daysleep.19_25 <- replace(daysleep.19_25, daysleep.19_25<0, 0)
 mean(daysleep.19_25, na.rm = TRUE)
+# Simulated mean hovers around: 97-102
+# Original mean: 100.57
 
 
-daysleep.26_36 <- (0.6)*(impute_screen.26_36 * daysleep_screen_ratio.26_36) + 
-  (0.4)*(daysleep_mean.26_36 + rnorm(daysleep.n.26_36, sd=daysleep_sd.26_36))
+daysleep.26_36 <- rtruncnorm(n=total.n.26_36, a=(daysleep.mean.26_36-daysleep.sd.26_36*3), 
+                             b=(daysleep.mean.26_36+daysleep.sd.26_36*2),
+                             mean=daysleep.mean.26_36-4,
+                             sd=daysleep.sd.26_36) + 
+  0.05*(impute_screen.26_36 * daysleep.screen_ratio.26_36)
 daysleep.26_36[sample(1:length(daysleep.26_36), size=(total.n.26_36-daysleep.n.26_36),
                      replace = FALSE)] <- NA
 daysleep.26_36 <- replace(daysleep.26_36, daysleep.26_36<0, 0)
 mean(daysleep.26_36, na.rm = TRUE)
+# Simulated mean hovers around: 59-78
+# Original mean: 68.25
+
 
 daysleep <- c(daysleep.6_11, daysleep.12_18, daysleep.19_25, daysleep.26_36)
+hist(daysleep)
+mean(daysleep, na.rm=TRUE)
+# Simulated mean: 106.32
+# Original mean: 108.29
 
 # Total sleep
 
@@ -387,6 +427,13 @@ totalsleep <- ntsleep+daysleep
 
 # Average number of night awakenings
 
+# Age means 
+age.mean.6_11 <- 8.99
+age.mean.12_18 <- 14.40
+age.mean.19_25 <- 21.94
+age.mean.26_36 <- 30.64
+
+
 # Overall values for each age group
 
 wake.n.6_11 <- 116
@@ -394,58 +441,80 @@ wake.n.12_18 <- 177
 wake.n.19_25 <- 133
 wake.n.26_36 <- 130
 
-wake_sd.6_11 <- 1.73
-wake_sd.12_18 <- 1.33
-wake_sd.19_25 <- 1.01
-wake_sd.26_36 <- 0.81
+wake.sd.6_11 <- 1.73
+wake.sd.12_18 <- 1.33
+wake.sd.19_25 <- 1.01
+wake.sd.26_36 <- 0.81
 
-wake_mean.6_11 <- 2
-wake_mean.12_18 <- 1.29
-wake_mean.19_25 <- 0.91
-wake_mean.26_36 <- 0.58
+wake.mean.6_11 <- 2
+wake.mean.12_18 <- 1.29
+wake.mean.19_25 <- 0.91
+wake.mean.26_36 <- 0.58
 
 
 # Ratio values for each age group
-wake_screen_ratio.6_11 <- wake_mean.6_11/screen_mean.6_11
-wake_screen_ratio.12_18 <- wake_mean.12_18/screen_mean.12_18
-wake_screen_ratio.19_25 <- wake_mean.19_25/screen_mean.19_25
-wake_screen_ratio.26_36 <- wake_mean.26_36/screen_mean.26_36
+wake.age_ratio.6_11 <- wake_mean.6_11/age.mean.6_11
+wake.age_ratio.12_18 <- wake_mean.12_18/age.mean.12_18
+wake.age_ratio.19_25 <- wake_mean.19_25/age.mean.19_25
+wake.age_ratio.26_36 <- wake_mean.26_36/age.mean.26_36
 
 
-wake.6_11 <- ceiling((0.6)*(impute_screen.6_11 * wake_screen_ratio.6_11) + 
-  (0.4)*(wake_mean.6_11 + rnorm(wake.n.6_11, sd=wake_sd.6_11)) - 0.55)
+wake.6_11 <- floor(rtruncnorm(n=total.n.6_11, a=(wake.mean.6_11-wake.sd.6_11*2), 
+                            b=(wake.mean.6_11+wake.sd.6_11*3),
+                            mean=wake.mean.6_11+0.75,
+                            sd=wake.sd.6_11) - 
+                  0.15*(impute.age.6_11 * wake.age_ratio.6_11))
 wake.6_11[sample(1:length(wake.6_11), size=(total.n.6_11-wake.n.6_11),
                      replace = FALSE)] <- NA
 wake.6_11 <- replace(wake.6_11, wake.6_11<0, 0)
 mean(wake.6_11, na.rm = TRUE)
+# Simulated mean hovers around: 1.75-2.19
+# Original mean: 2
 
 
-wake.12_18 <- ceiling((0.6)*(impute_screen.12_18 * wake_screen_ratio.12_18) + 
-  (0.4)*(wake_mean.12_18 + rnorm(wake.n.12_18, sd=wake_sd.12_18))-0.45)
+wake.12_18 <- floor(rtruncnorm(n=total.n.12_18, a=(wake.mean.12_18-wake.sd.12_18*2), 
+                              b=(wake.mean.12_18+wake.sd.12_18*3),
+                              mean=wake.mean.12_18+0.6,
+                              sd=wake.sd.12_18) - 
+                     0.15*(impute.age.12_18 * wake.age_ratio.12_18))
 wake.12_18[sample(1:length(wake.12_18), size=(total.n.12_18-wake.n.12_18),
                       replace = FALSE)] <- NA
 wake.12_18 <- replace(wake.12_18, wake.12_18<0, 0)
 mean(wake.12_18, na.rm = TRUE)
+# Simulated mean hovers around: 1.23-1.37
+# Original mean: 1.29
 
 
-wake.19_25 <- floor((0.6)*(impute_screen.19_25 * wake_screen_ratio.19_25) + 
-  (0.4)*(wake_mean.19_25 + rnorm(wake.n.19_25, sd=wake_sd.19_25)))
+wake.19_25 <- floor(rtruncnorm(n=total.n.19_25, a=(wake.mean.19_25-wake.sd.19_25*2), 
+                               b=(wake.mean.19_25+wake.sd.19_25*3),
+                               mean=wake.mean.19_25+0.55,
+                               sd=wake.sd.19_25) - 
+                      0.15*(impute.age.19_25 * wake.age_ratio.19_25))
 wake.19_25[sample(1:length(wake.19_25), size=(total.n.19_25-wake.n.19_25),
                       replace = FALSE)] <- NA
 wake.19_25 <- replace(wake.19_25, wake.19_25<0, 0)
 mean(wake.19_25, na.rm = TRUE)
+# Simulated mean hovers around: 0.85-1.06
+# Original mean: 0.91
 
 
-wake.26_36 <- ceiling((0.6)*(impute_screen.26_36 * wake_screen_ratio.26_36) + 
-  (0.4)*(wake_mean.26_36 + rnorm(wake.n.26_36, sd=wake_sd.26_36))+.3)
+wake.26_36 <- floor(rtruncnorm(n=total.n.26_36, a=(wake.mean.26_36-wake.sd.26_36*2), 
+                               b=(wake.mean.26_36+wake.sd.26_36*3),
+                               mean=wake.mean.26_36+0.55,
+                               sd=wake.sd.26_36) - 
+                      0.15*(impute.age.26_36 * wake.age_ratio.26_36))
 wake.26_36[sample(1:length(wake.26_36), size=(total.n.26_36-wake.n.26_36),
                       replace = FALSE)] <- NA
 wake.26_36 <- replace(wake.26_36, wake.26_36<0, 0)
 mean(wake.26_36, na.rm = TRUE)
+# Simulated mean hovers around: 0.53-0.67
+# Original mean: 0.58
+
 
 wake <- c(wake.6_11, wake.12_18, wake.19_25, wake.26_36)
-
-
+mean(wake, na.rm=TRUE)
+# Sim mean: 1.23
+# Original mean: 1.17
 
 # Sleep onset
 
