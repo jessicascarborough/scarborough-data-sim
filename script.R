@@ -641,6 +641,7 @@ df$age_category <- factor(rep(x = "26-36 months", times=length(df$age)),
 df$age_category[df$age < 26] <- "19-25 months"
 df$age_category[df$age < 19] <- "12-18 months"
 df$age_category[df$age < 12] <- "6-11 months"
+
 #### Data Exploration ####
 
 library(ggplot2)
@@ -674,6 +675,7 @@ corrplot(cor(df_nocat, use = "complete.obs"), method = 'number', p.mat = cor1[[1
          type='lower', sig.level = 0.5, bg='gray72')
 
 
+## Visualization
 ggplot(data=df, aes(x=age_category)) + 
   geom_bar() + 
   labs(title = "Number of patients in each age category",
@@ -782,14 +784,173 @@ ggplot(data=df, aes(x=screentime, color=sex, fill=sex)) +
 
 ## Basic Regression
 
+lm.screen1 <- lm(data=df, screentime~.)
+summary(lm.screen1)
+# Residual standard error: 11.83 on 214 degrees of freedom
+# Adjusted R-squared:  0.7794 
+# p-value: < 2.2e-16
+  # Shows us that nighttime sleep, daysleep, and some of the age categories
+  # are the only significant variables in determining the amount of time
+  # spend on a touchscreen. With ~20 variables/feature this model is unlikely 
+  # to be overfit. 
+
+lm.screen2 <- lm(data=df, screentime~ntsleep+daysleep+age_category)
+summary(lm.screen2)
+# Residual standard error: 17.42 on 367 degrees of freedom
+# Adjusted R-squared:  0.5726 
+# p-value: < 2.2e-16
+  # Although nearly all the variables are significant, the R-squared is much lower
+
+lm.screen3 <- lm(data=df, screentime~ntsleep*daysleep*age_category)
+summary(lm.screen3)
+# Residual standard error: 16.07 on 357 degrees of freedom
+# Adjusted R-squared:  0.6364 
+# p-value: < 2.2e-16
+  # Here the adjusted r-squared is improved, but the variables aren't significant
+
+lm.screen4 <- lm(data=df, screentime~ntsleep*daysleep + age_category+sex)
+summary(lm.screen4)
+# Residual standard error: 17.4 on 365 degrees of freedom
+# Adjusted R-squared:  0.5737 
+# p-value: < 2.2e-16
+  # Here, again, we see that more of the variables are significant, but the 
+  # adjusted r-squared is worsened 
+
+lm.screen5 <- lm(data=df, screentime~.-wake)
+summary(lm.screen5)
+# Residual standard error: 11.8 on 215 degrees of freedom
+# Adjusted R-squared:  0.7803 
+# p-value: < 2.2e-16
+  # With this I decided to take out only the most insignificant variable, 
+  # and that improved the adjusted r-squared very slightly
+
+lm.screen6 <- lm(data=df, screentime~.-wake-daysleep)
+summary(lm.screen6)
+# Residual standard error: 11.8 on 215 degrees of freedom
+# Adjusted R-squared:  0.7803 
+# p-value: < 2.2e-16
+  # No change to adjusted r-squared, but it simplifies the model
+
+lm.screen7 <- lm(data=df, screentime~.-wake-daysleep-totalsleep)
+summary(lm.screen7)
+# Residual standard error: 11.78 on 216 degrees of freedom
+# Adjusted R-squared:  0.7813 
+# p-value: < 2.2e-16
+# Improved R-squared
+
+lm.screen8 <- lm(data=df, screentime~.-wake-daysleep-totalsleep-onset-age)
+summary(lm.screen8)
+# Residual standard error: 11.77 on 217 degrees of freedom
+# Adjusted R-squared:  0.7816 
+# p-value: < 2.2e-16
+  # Very slight improvement to R-squared
+
+lm.screen9 <- lm(data=df, screentime~tv+ntsleep*age_category)
+summary(lm.screen9)
+# Residual standard error: 11.63 on 404 degrees of freedom
+# Adjusted R-squared:  0.8196 
+# p-value: < 2.2e-16
+  # Best rsquared value yet
+
+lm.screen9 <- lm(data=df, screentime~tv*ntsleep*age_category)
+summary(lm.screen9)
+# Residual standard error: 10.16 on 397 degrees of freedom
+# Adjusted R-squared:  0.8622 
+# p-value: < 2.2e-16
+# Best rsquared value yet
+
+
+lm.ntsleep1 <- lm(data=df, ntsleep~.-totalsleep)
+summary(lm.ntsleep1)
+# Residual standard error: 55.68 on 214 degrees of freedom
+# Adjusted R-squared:  0.4924 
+# p-value: < 2.2e-16
+  # This is a reasonable starting point, and there are only a few significant
+  # variables so I'll start by removing those
+
+lm.ntsleep2 <- lm(data=df, ntsleep~screentime+daysleep+age_category+onset)
+summary(lm.ntsleep2)
+# Residual standard error: 56.87 on 316 degrees of freedom
+# Adjusted R-squared:  0.4433 
+# p-value: < 2.2e-16
+  # Decreased r-squared
+
+lm.ntsleep3 <- lm(data=df, ntsleep~screentime*age_category)
+summary(lm.ntsleep3)
+# Residual standard error: 52.56 on 472 degrees of freedom
+# Adjusted R-squared:  0.5037 
+# p-value: < 2.2e-16
+  # Improved r-squared and all significant variables
+
+lm.ntsleep4 <- lm(data=df, ntsleep~screentime*age_category+tv)
+summary(lm.ntsleep4)
+# Residual standard error: 52.24 on 404 degrees of freedom
+# Adjusted R-squared:  0.5124 
+# p-value: < 2.2e-16
+  # Improved r-squared
+  # tv isn't a significant variable, but it does improve the r-squared
+  # value
+
+lm.ntsleep5 <- lm(data=df, ntsleep~screentime*age_category*tv)
+summary(lm.ntsleep5)
+# Residual standard error: 52.34 on 397 degrees of freedom
+# Adjusted R-squared:  0.5107 
+# p-value: < 2.2e-16
+  # Significantly worsened p-values, and slightly worsened adjusted
+  # r-squared
+
+# Shows us that age category and screentime are the most important in determining
+# nighttime sleep
+
+
+lm.wake1 <- lm(data=df, wake~.)
+summary(lm.wake1)
+# Residual standard error: 1.208 on 214 degrees of freedom
+# Adjusted R-squared:  0.1259 
+# p-value: 2.262e-05
+
+
+lm.wake2 <- lm(data=df, wake~sex+age_category+onset)
+summary(lm.wake2)
+# Residual standard error: 1.124 on 457 degrees of freedom
+# Adjusted R-squared:  0.1271 
+# p-value: 3.724e-13
+
+lm.onset1 <- lm(data=df, onset~.)
+summary(lm.onset1)
+# Residual standard error: 10.68 on 214 degrees of freedom
+# Adjusted R-squared:  0.08727 
+# p-value: 0.0009048
+
+lm.onset2 <- lm(data=df, onset~tv+age_category+ntsleep)
+summary(lm.onset2)
+# Residual standard error: 11.07 on 406 degrees of freedom
+# Adjusted R-squared:  0.1066 
+# p-value: 8.957e-10
+  # Still a very poor r-squared
+
+
+lm.onset3 <- lm(data=df, onset~tv+age_category)
+summary(lm.onset3)
+# Residual standard error: 11.22 on 512 degrees of freedom
+# Adjusted R-squared:  0.1088 
+# p-value: 6.588e-13
 
 
 ## Multivariate Multiple Regression
+age_category <- df$age_category
 
+dep.vars <- cbind(ntsleep, daysleep, wake, onset)
+ind.vars <- cbind(sex, tv, screentime, age_category)
 
-
+lm.all1 <- lm(data=df, dep.vars~sex+tv+screentime+age_category)
+summary(lm.all1)
+# This isn't as specific as simply doing it by hand, since it's more 
+# difficult to customize to each outcome variable. Each variable also
+# isn't considered interconnected. 
 
 ## Path Analysis
+
 
 
 
