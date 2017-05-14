@@ -66,7 +66,7 @@ impute.age.26_36 <- replace(age.26_36, is.na(age.26_36),
 
 
 
-install.packages("truncnorm")
+# install.packages("truncnorm")
 require(truncnorm)
 
 # Touchscreen Use
@@ -209,18 +209,18 @@ tv.mean.26_36 <- 219.01
 
 
 # Ratio values for each age group
-tv_screen.ratio.6_11 <- tv_mean.6_11/screen_mean.6_11
-tv_screen.ratio.12_18 <- tv_mean.12_18/screen_mean.12_18
-tv_screen.ratio.19_25 <- tv_mean.19_25/screen_mean.19_25
-tv_screen.ratio.26_36 <- tv_mean.26_36/screen_mean.26_36
+tv.screen.ratio.6_11 <- tv.mean.6_11/screen.mean.6_11
+tv.screen.ratio.12_18 <- tv.mean.12_18/screen.mean.12_18
+tv.screen.ratio.19_25 <- tv.mean.19_25/screen.mean.19_25
+tv.screen.ratio.26_36 <- tv.mean.26_36/screen.mean.26_36
 
 
-tv_mean.all <-200.27
+tv.mean.all <-200.27
 
 
 
-tv.6_11 <- (0.6)*(impute_screen.6_11 * tv_screen.ratio.6_11) + 
-  (0.4)*(tv_mean.6_11 + rnorm(tv.n.6_11, sd=tv_sd.6_11))
+tv.6_11 <- (0.6)*(impute_screen.6_11 * tv.screen.ratio.6_11) + 
+  (0.4)*(tv.mean.6_11 + rnorm(tv.n.6_11, sd=tv.sd.6_11))
 tv.6_11[sample(1:length(tv.6_11), size=(total.n.6_11-tv.n.6_11), 
                replace = FALSE)] <- NA
 tv.6_11 <- replace(tv.6_11, tv.6_11<0, 0)
@@ -230,8 +230,8 @@ mean(tv.6_11, na.rm=TRUE)
 # Original mean: 209.72
 
 
-tv.12_18 <- (0.6)*(impute_screen.12_18 * tv_screen.ratio.12_18) + 
-  (0.4)*(tv_mean.12_18 + rnorm(tv.n.12_18, sd=tv_sd.12_18))
+tv.12_18 <- (0.6)*(impute_screen.12_18 * tv.screen.ratio.12_18) + 
+  (0.4)*(tv.mean.12_18 + rnorm(tv.n.12_18, sd=tv.sd.12_18))
 tv.12_18[sample(1:length(tv.12_18), size=(total.n.12_18-tv.n.12_18), 
                 replace = FALSE)] <- NA
 tv.12_18 <- replace(tv.12_18, tv.12_18<0, 0)
@@ -241,8 +241,8 @@ mean(tv.12_18, na.rm=TRUE)
 # Original mean: 189.62
 
 
-tv.19_25 <- (0.6)*(impute_screen.19_25 * tv_screen.ratio.19_25) + 
-  (0.4)*(tv_mean.19_25 + rnorm(tv.n.19_25, sd=tv_sd.19_25))
+tv.19_25 <- (0.6)*(impute_screen.19_25 * tv.screen.ratio.19_25) + 
+  (0.4)*(tv.mean.19_25 + rnorm(tv.n.19_25, sd=tv.sd.19_25))
 tv.19_25[sample(1:length(tv.19_25), size=(total.n.19_25-tv.n.19_25), 
                 replace = FALSE)] <- NA
 tv.19_25 <- replace(tv.19_25, tv.19_25<0, 0)
@@ -251,8 +251,8 @@ mean(tv.19_25, na.rm=TRUE)
 # Sim mean hovers between: 175-195
 # Original mean: 187.00
 
-tv.26_36 <- (0.6)*(impute_screen.26_36 * tv_screen.ratio.26_36) + 
-  (0.4)*(tv_mean.26_36 + rnorm(tv.n.26_36, mean=-10, sd=tv_sd.26_36))
+tv.26_36 <- (0.6)*(impute_screen.26_36 * tv.screen.ratio.26_36) + 
+  (0.4)*(tv.mean.26_36 + rnorm(tv.n.26_36, mean=-10, sd=tv.sd.26_36))
 tv.26_36[sample(1:length(tv.26_36), size=(total.n.26_36-tv.n.26_36), 
                 replace = FALSE)] <- NA
 tv.26_36 <- replace(tv.26_36, tv.26_36<0, 0)
@@ -477,10 +477,10 @@ wake.mean.26_36 <- 0.58
 
 
 # Ratio values for each age group
-wake.age_ratio.6_11 <- wake_mean.6_11/age.mean.6_11
-wake.age_ratio.12_18 <- wake_mean.12_18/age.mean.12_18
-wake.age_ratio.19_25 <- wake_mean.19_25/age.mean.19_25
-wake.age_ratio.26_36 <- wake_mean.26_36/age.mean.26_36
+wake.age_ratio.6_11 <- wake.mean.6_11/age.mean.6_11
+wake.age_ratio.12_18 <- wake.mean.12_18/age.mean.12_18
+wake.age_ratio.19_25 <- wake.mean.19_25/age.mean.19_25
+wake.age_ratio.26_36 <- wake.mean.26_36/age.mean.26_36
 
 
 wake.6_11 <- floor(rtruncnorm(n=total.n.6_11, a=(wake.mean.6_11-wake.sd.6_11*2), 
@@ -644,23 +644,156 @@ df$age_category[df$age < 12] <- "6-11 months"
 #### Data Exploration ####
 
 library(ggplot2)
+library(corrplot)
+library(psych)
+
+# NOTE: 
+# Taken from: https://cran.r-project.org/web/packages/corrplot/vignettes/corrplot-intro.html**
+
+cor.mtest <- function(mat, conf.level = 0.95){
+  mat <- as.matrix(mat)
+  n <- ncol(mat)
+  p.mat <- lowCI.mat <- uppCI.mat <- matrix(NA, n, n)
+  diag(p.mat) <- 0
+  diag(lowCI.mat) <- diag(uppCI.mat) <- 1
+  for(i in 1:(n-1)){
+    for(j in (i+1):n){
+      tmp <- cor.test(mat[,i], mat[,j], conf.level = conf.level)
+      p.mat[i,j] <- p.mat[j,i] <- tmp$p.value
+      lowCI.mat[i,j] <- lowCI.mat[j,i] <- tmp$conf.int[1]
+      uppCI.mat[i,j] <- uppCI.mat[j,i] <- tmp$conf.int[2]
+    }
+  }
+  return(list(p.mat, lowCI.mat, uppCI.mat))
+}
+
+df_nocat <- data.frame(age, tv, screentime, ntsleep, daysleep, totalsleep, wake, onset)
+cor1 <- cor.mtest(df_nocat, 0.95)
+corrplot(cor(df_nocat, use = "complete.obs"), p.mat = cor1[[1]], type='lower', sig.level = 0.5)
+corrplot(cor(df_nocat, use = "complete.obs"), method = 'number', p.mat = cor1[[1]],
+         type='lower', sig.level = 0.5, bg='gray72')
+
+
+ggplot(data=df, aes(x=age_category)) + 
+  geom_bar() + 
+  labs(title = "Number of patients in each age category",
+       x = "Age Category",
+       y = "Count")
+# Gives us a general idea of the age distribution
+
+
+ggplot(data=df, aes(x=screentime)) + 
+  geom_histogram() + 
+  labs(title = "Distribution of Touchscreen Time",
+       x = "Touchscreen Time (Minutes)", 
+       y = "Count")
+
+ggplot(data=df, aes(x=ntsleep)) + 
+  geom_histogram() + 
+  labs(title = "Distribution of Nighttime Sleep",
+       x = "Nighttime Sleep (Minutes)", 
+       y = "Count")
+
+ggplot(data=df, aes(x=daysleep)) + 
+  geom_histogram() + 
+  labs(title = "Distribution of Daytime Sleep",
+       x = "Daytime Sleep (Minutes)", 
+       y = "Count")
+
+ggplot(data=df, aes(x=onset)) + 
+  geom_histogram() + 
+  labs(title = "Distribution of Onset of Sleep",
+       x = "Time to Fall Asleep (Minutes)", 
+       y = "Count")
+
+ggplot(data=df, aes(x=tv)) + 
+  geom_histogram() + 
+  labs(title = "Distribution of Background TV Time",
+       x = "Background TV Time (Minutes)", 
+       y = "Count")
 
 ggplot(data=df, aes(x=screentime, y=daysleep, color=age_category)) + 
   geom_point() +
-  labs(title = "Background TV vs. Touchscreen Use", 
+  labs(title = "Daytime Sleep vs. Touchscreen Use", 
        y = "Day time sleep (minutes)", 
-       x = "Touch Screen Time")
+       x = "Touchscreen Time")
+# This shows that touchscreen time has a slightly positive correlation with 
+# day time sleep in all age categories. The corrplot (which doesn't separate by age category)
+# shows a nearly non-existent negative correlation between these two variables (0.03)
 
 ggplot(data=df, aes(x=tv, y=wake, color=age_category)) + 
   geom_point() +
   labs(title = "Background TV vs. Touchscreen Use", 
        y = "Avg. Number of Awakenings", 
-       x = "Background TV")
+       x = "Background TV (minutes)")
+# These are more difficult to read, but it does show that more nighttime awakenings
+# (>3) are almost exclusively associated with the lowest two age categories. 
+
+# Additionally, background TV doesn't appear to be associated with average awakenings, 
+# but due to the crowding of this plot, it is not a good method for making this conclusion. 
+
 
 ggplot(data=df, aes(x=screentime, color=age_category, fill=age_category)) + 
   geom_density(alpha=0.5) + 
   labs(title = "Touchscreen Use by Age Category", 
        x = "Touchscreen Use (minutes)")
+# Touchscreen use certainly increases with age, with the smallest differences between the 
+# 12-18 and 19-25 month categories
+
+ggplot(data=df, aes(x=tv, color=age_category, fill=age_category)) + 
+  geom_density(alpha=0.5) + 
+  labs(title = "Background TV by Age Category", 
+       x = "Background TV (minutes)")
+# Similar background TV use by age group, but slightly higher in the oldest 
+
+ggplot(data=df, aes(x=daysleep, color=age_category, fill=age_category)) + 
+  geom_density(alpha=0.5) + 
+  labs(title = "Daysleep by Age Category", 
+       x = "Time spend asleep during the day (minutes)")
+# Although the distribution is rather spread out, it is clear that sleeping during the day
+# decreases with age
+
+ggplot(data=df, aes(x=wake, color=age_category, fill=age_category)) + 
+  geom_density(alpha=0.5) + 
+  labs(title = "Daysleep by Age Category", 
+       x = "Time spend asleep during the day (minutes)")
+# Although the distribution is rather spread out, average number of nighttime
+# awakenings does decreases with age
+
+ggplot(data=df, aes(x=wake)) + 
+  geom_histogram() + 
+  facet_wrap(~age_category)
+# Confirms that the average number of awakenings as a group decreases with age
+
+ggplot(data=df, aes(x=tv, color=sex, fill=sex)) + 
+  geom_density(alpha=0.5) + 
+  labs(title = "Background TV by Sex", 
+       x = "Background TV (minutes)")
+# Female infants have slightly less background TV than males
+
+ggplot(data=df, aes(x=screentime, color=sex, fill=sex)) + 
+  geom_density(alpha=0.5) + 
+  labs(title = "Touchscreen Time by Sex", 
+       x = "Touchscreen Time (minutes)")
+# Female infants have slightly less background TV than males
+
+
+##### Modeling #####
+
+## Basic Regression
+
+
+
+## Multivariate Multiple Regression
+
+
+
+
+## Path Analysis
+
+
+
+
 
 # Alternative method for simulating TV, not as good as the final chosen method
 

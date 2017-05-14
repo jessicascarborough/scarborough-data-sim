@@ -725,6 +725,7 @@ mean(onset, na.rm=TRUE)
 
 # Data Exploration
 
+## Testing for normality
 ```{r}
 shapiro.test(age)
 shapiro.test(tv)
@@ -737,9 +738,163 @@ shapiro.test(onset)
 In the original data, only the nightsleep (ntsleep) and daytime sleep (daysleep) are normally distributed. According to this shapiro wilks test, however, all of my data is normal. Considering that the rest of the metrics are okay, I am okay with this fact. 
 
 
+## Correlations
+
+```{r}
+library(corrplot)
+cor.mtest <- function(mat, conf.level = 0.95){
+  mat <- as.matrix(mat)
+  n <- ncol(mat)
+  p.mat <- lowCI.mat <- uppCI.mat <- matrix(NA, n, n)
+  diag(p.mat) <- 0
+  diag(lowCI.mat) <- diag(uppCI.mat) <- 1
+  for(i in 1:(n-1)){
+    for(j in (i+1):n){
+      tmp <- cor.test(mat[,i], mat[,j], conf.level = conf.level)
+      p.mat[i,j] <- p.mat[j,i] <- tmp$p.value
+      lowCI.mat[i,j] <- lowCI.mat[j,i] <- tmp$conf.int[1]
+      uppCI.mat[i,j] <- uppCI.mat[j,i] <- tmp$conf.int[2]
+    }
+  }
+  return(list(p.mat, lowCI.mat, uppCI.mat))
+}
+
+df_nocat <- data.frame(age, tv, screentime, ntsleep, daysleep, totalsleep, wake, onset)
+cor1 <- cor.mtest(df_nocat, 0.95)
+corrplot(cor(df_nocat, use = "complete.obs"), p.mat = cor1[[1]], type='lower', sig.level = 0.5)
+corrplot(cor(df_nocat, use = "complete.obs"), method = 'number', p.mat = cor1[[1]],
+         type='lower', sig.level = 0.5, bg='gray72)
+```
+
+These corrplots show us the same information in different formats. The first plot is visualized with shapes, while the second with numbers. The boxes marked with X's represent insignificant correlations with a p < 0.05. 
+
+**Positive correlations:**
+First of all, total sleep and nighttime sleep are heavily positively correlated while daytime sleep and total sleep are minimally correlated. Additionally, tv and touchscreen time is moderately correlated. Considering that TV was based partially on screentime in my simulation, this is expected. Other positively correlated variables include moderate correlation between touchscreen time and age, which is reasonable. 
+
+*Minimal:* There are many minimal correlations between onset and tv, screentime, and age. Finally, there are minimal correlations between tv and daysleep, and number of nighttime awakenings and day sleep. 
+
+**Negative correlations:**
+There are moderate to strong correlations between nighttime sleep and tv and touchscreen time along with total sleep and tv and touchscreen time. There is a moderate correlation between age and daysleep and number of night awakenings. 
+
+*Minimal:* There are a few minimal correlations as follows: total sleep and age, awakenings, and screentime, daysleep and night sleep, and onset of sleep and daysleep. 
+
+## Data Visualization
+
+### General Distributions
+```{r}
+ggplot(data=df, aes(x=age_category)) + 
+  geom_bar() + 
+  labs(title = "Number of patients in each age category",
+       x = "Age Category",
+       y = "Count")
+
+```{r}
+ggplot(data=df, aes(x=screentime)) + 
+  geom_histogram() + 
+  labs(title = "Distribution of Touchscreen Time",
+       x = "Touchscreen Time (Minutes)", 
+       y = "Count")
+
+ggplot(data=df, aes(x=ntsleep)) + 
+  geom_histogram() + 
+  labs(title = "Distribution of Nighttime Sleep",
+       x = "Nighttime Sleep (Minutes)", 
+       y = "Count")
+
+ggplot(data=df, aes(x=daysleep)) + 
+  geom_histogram() + 
+  labs(title = "Distribution of Daytime Sleep",
+       x = "Daytime Sleep (Minutes)", 
+       y = "Count")
+
+ggplot(data=df, aes(x=onset)) + 
+  geom_histogram() + 
+  labs(title = "Distribution of Onset of Sleep",
+       x = "Time to Fall Asleep (Minutes)", 
+       y = "Count")
+
+ggplot(data=df, aes(x=tv)) + 
+  geom_histogram() + 
+  labs(title = "Distribution of Background TV Time",
+       x = "Background TV Time (Minutes)", 
+       y = "Count")
+```
+
+### Scatter plots
+```{r}
+ggplot(data=df, aes(x=screentime, y=daysleep, color=age_category)) + 
+  geom_point() +
+  labs(title = "Daytime Sleep vs. Touchscreen Use", 
+       y = "Day time sleep (minutes)", 
+       x = "Touchscreen Time")
+```
+
+This shows that touchscreen time has a slightly positive correlation with day time sleep in all age categories. The corrplot (which doesn't separate by age category) shows a nearly non-existent negative correlation between these two variables (0.03)
+
+```{r}
+ggplot(data=df, aes(x=tv, y=wake, color=age_category)) + 
+  geom_point() +
+  labs(title = "Background TV vs. Touchscreen Use", 
+       y = "Avg. Number of Awakenings", 
+       x = "Background TV (minutes)")
+```
+
+These are more difficult to read, but it does show that more nighttime awakenings (>3) are almost exclusively associated with the lowest two age categories. 
+
+Additionally, background TV doesn't appear to be associated with average awakenings, but due to the crowding of this plot, it is not a good method for making this conclusion. 
+
+### Density Plots
+```{r}
+ggplot(data=df, aes(x=screentime, color=age_category, fill=age_category)) + 
+  geom_density(alpha=0.5) + 
+  labs(title = "Touchscreen Use by Age Category", 
+       x = "Touchscreen Use (minutes)")
+# Touchscreen use certainly increases with age, with the smallest differences between the 
+# 12-18 and 19-25 month categories
+
+ggplot(data=df, aes(x=tv, color=age_category, fill=age_category)) + 
+  geom_density(alpha=0.5) + 
+  labs(title = "Background TV by Age Category", 
+       x = "Background TV (minutes)")
+# Similar background TV use by age group, but slightly higher in the oldest 
+
+ggplot(data=df, aes(x=daysleep, color=age_category, fill=age_category)) + 
+  geom_density(alpha=0.5) + 
+  labs(title = "Daysleep by Age Category", 
+       x = "Time spend asleep during the day (minutes)")
+# Although the distribution is rather spread out, it is clear that sleeping during the day
+# decreases with age
+
+ggplot(data=df, aes(x=wake, color=age_category, fill=age_category)) + 
+  geom_density(alpha=0.5) + 
+  labs(title = "Daysleep by Age Category", 
+       x = "Time spend asleep during the day (minutes)")
+# Although the distribution is rather spread out, average number of nighttime
+# awakenings does decreases with age
+
+ggplot(data=df, aes(x=wake)) + 
+  geom_histogram() + 
+  facet_wrap(~age_category)
+# Confirms that the average number of awakenings as a group decreases with age
+
+ggplot(data=df, aes(x=tv, color=sex, fill=sex)) + 
+  geom_density(alpha=0.5) + 
+  labs(title = "Background TV by Sex", 
+       x = "Background TV (minutes)")
+# Female infants have slightly less background TV than males
+
+ggplot(data=df, aes(x=screentime, color=sex, fill=sex)) + 
+  geom_density(alpha=0.5) + 
+  labs(title = "Touchscreen Time by Sex", 
+       x = "Touchscreen Time (minutes)")
+# Female infants have slightly less background TV than males
+```
+
 # Modeling
 
 ## Basic Regression
+
+
 
 ## Multivariate Multiple Regression
 
