@@ -780,7 +780,7 @@ ggplot(data=df, aes(x=screentime, color=sex, fill=sex)) +
 # Female infants have slightly less background TV than males
 
 
-##### Modeling #####
+##### Modeling  #####
 
 ## Basic Regression
 
@@ -882,6 +882,7 @@ summary(lm.ntsleep3)
 # p-value: < 2.2e-16
   # Improved r-squared and all significant variables
 
+
 lm.ntsleep4 <- lm(data=df, ntsleep~screentime*age_category+tv)
 summary(lm.ntsleep4)
 # Residual standard error: 52.24 on 404 degrees of freedom
@@ -890,6 +891,7 @@ summary(lm.ntsleep4)
   # Improved r-squared
   # tv isn't a significant variable, but it does improve the r-squared
   # value
+# BEST MODEL
 
 lm.ntsleep5 <- lm(data=df, ntsleep~screentime*age_category*tv)
 summary(lm.ntsleep5)
@@ -937,6 +939,37 @@ summary(lm.onset3)
 # p-value: 6.588e-13
 
 
+
+lm.daysleep1 <- lm(data=df, daysleep~.-totalsleep)
+summary(lm.daysleep1)
+# Residual standard error: 41.62 on 214 degrees of freedom
+# Adjusted R-squared:  0.1404 
+# p-value: 5.166e-06
+  # No significant variables, I will take the most significant (< 0.2)
+  # for the next model
+
+lm.daysleep2 <- lm(data=df, daysleep~age+sex+tv)
+summary(lm.daysleep2)
+# Residual standard error: 40.55 on 471 degrees of freedom
+# Adjusted R-squared:  0.2564 
+# p-value: < 2.2e-16
+  # all significant variables
+
+lm.daysleep3 <- lm(data=df, daysleep~age_category+sex+tv)
+summary(lm.daysleep3)  
+# Residual standard error: 40.06 on 469 degrees of freedom
+# Adjusted R-squared:  0.2743 
+# p-value: < 2.2e-16
+  # Slightly improved r-squared, all variables are still significant (p<0.05)
+  # BEST MODEL
+
+lm.daysleep4 <- lm(data=df, daysleep~age_category*tv+sex)
+summary(lm.daysleep4)  
+# Residual standard error: 40.08 on 466 degrees of freedom
+# Adjusted R-squared:  0.2735 
+# p-value: < 2.2e-16
+  # Slightly worsened adjusted r-squared and more complex model
+
 ## Multivariate Multiple Regression
 age_category <- df$age_category
 
@@ -950,6 +983,78 @@ summary(lm.all1)
 # isn't considered interconnected. 
 
 ## Path Analysis
+
+# We need to know how many samples are in the correlations, so 
+# I am going to run one of the models to determine how many 
+# samples are deleted due to missingness. 
+
+lm1 <- lm(data=df, ntsleep~daysleep+wake+onset+age+tv+screentime)
+summary(lm1)
+# 490 samples deleted, 715-490 = 225 samples
+n_samples = 225
+
+install.packages('lavaan')
+require(lavaan)
+correlations <- cor(df_nocat, use = "complete.obs")
+correlations
+model1 <- 'ntsleep~daysleep+wake+onset+age+tv+screentime
+daysleep~ntsleep+wake+onset+age+tv+screentime
+wake~ntsleep+daysleep+onset+age+tv+screentime
+onset~ntsleep+daysleep+wake+age+tv+screentime'
+results1<-sem(model1,sample.cov=correlations,sample.nobs=n_samples)
+# This error is the result of a poor model, because it cannot have features mutually relying on 
+# each other. Unfortunately, this is what I thought was the best part of doing a path 
+# analysis. For example, we cannot have ntsleep~daysleep+etc and daysleep~ntsleep+etc
+# Although I understand how this is predictably very difficult, that would help us simulate
+# real data. 
+
+# More complex models were not working, so I started by simplifying the model significantly
+model2 <- 'ntsleep~daysleep+wake+onset+age+tv+screentime
+daysleep~ntsleep+wake'
+results2<-sem(model2,sample.cov=correlations,sample.nobs=n_samples)
+summary(results2,standardized=T,fit=T,rsquare=T)
+# R-Square:
+# ntsleep           0.442
+# daysleep          0.009
+
+model3 <- 'ntsleep~daysleep+wake+onset+age+tv+screentime
+wake~ntsleep+daysleep+onset'
+results3<-sem(model3,sample.cov=correlations,sample.nobs=n_samples)
+summary(results3,standardized=T,fit=T,rsquare=T)
+# R-Square:
+# ntsleep           0.435
+# wake             -0.004
+
+model4 <- 'ntsleep~daysleep+wake+onset+age+tv+screentime
+onset~ntsleep+daysleep+wake'
+results4<-sem(model4,sample.cov=correlations,sample.nobs=n_samples)
+summary(results4,standardized=T,fit=T,rsquare=T)
+# R-Square:
+# ntsleep           0.441
+# onset             0.000
+
+# Making a more complex model
+
+model5 <- 'ntsleep~daysleep+wake+onset+age+tv+screentime
+daysleep~wake+onset+age+tv+screentime
+wake~onset+age+tv+screentime
+onset~age+tv+screentime'
+results5<-sem(model5,sample.cov=correlations,sample.nobs=n_samples)
+summary(results5,standardized=T,fit=T,rsquare=T)
+
+# R-Square:
+# ntsleep           0.443
+# daysleep          0.243
+# wake              0.109
+# onset             0.018
+
+# Although these results are not "bad," looking deeper at the insignificant
+# results shows us that each of the outcome variables is not a significant
+# feature in other predictions. In other words, daysleep, wake, and onset
+# (theoretically predictor AND outcome variables) are not significant
+# when performing a linear regression predicting ntsleep. 
+
+
 
 
 

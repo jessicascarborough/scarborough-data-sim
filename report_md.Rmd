@@ -18,7 +18,7 @@ require(ggplot2)
 
 # Report Description
 
-This report examines data simulation, exporation, and modeling analysis. The exploration portion of the project utilizes data visualization and MANOVA analysis. Modeling will begin with simple regression, and then move to multivariate multiple regression, ending with path analysis. 
+This report examines data simulation, exporation, and modeling analysis. The exploration portion of the project utilizes data visualization, normality testing, and correlation analysis. Modeling will begin with simple regression, and then move to multivariate multiple regression, ending with path analysis. 
 
 **Predictor variables:**
 
@@ -914,10 +914,8 @@ ggplot(data=df, aes(x=screentime, color=sex, fill=sex)) +
 
 ## Basic Regression
 
+**Predicting touchscreen use:**
 ```{r error=TRUE}
-
-## Basic Regression
-
 lm.screen1 <- lm(data=df, screentime~.)
 summary(lm.screen1)
 # Residual standard error: 11.83 on 214 degrees of freedom
@@ -1003,16 +1001,10 @@ summary(lm.screen9)
 # p-value: < 2.2e-16
   # Best rsquared value yet
 ```
+This is our best model
 
-```{r error=TRUE}
-lm.screen9 <- lm(data=df, screentime~tv*ntsleep*age_category)
-summary(lm.screen9)
-# Residual standard error: 10.16 on 397 degrees of freedom
-# Adjusted R-squared:  0.8622 
-# p-value: < 2.2e-16
-# Best rsquared value yet
-```
 
+**Predicting nighttime sleep:**
 ```{r error=TRUE}
 
 lm.ntsleep1 <- lm(data=df, ntsleep~.-totalsleep)
@@ -1052,6 +1044,8 @@ summary(lm.ntsleep4)
   # tv isn't a significant variable, but it does improve the r-squared
   # value
 ```
+This is our best model
+
 
 ```{r error=TRUE}
 lm.ntsleep5 <- lm(data=df, ntsleep~screentime*age_category*tv)
@@ -1066,6 +1060,8 @@ summary(lm.ntsleep5)
 # nighttime sleep
 ```
 
+
+**Predicting average number of nighttime awakenings:**
 ```{r error=TRUE}
 
 lm.wake1 <- lm(data=df, wake~.)
@@ -1082,7 +1078,9 @@ summary(lm.wake2)
 # Adjusted R-squared:  0.1271 
 # p-value: 3.724e-13
 ```
+This is our best model
 
+**Predicting sleep onset:**
 ```{r error=TRUE}
 lm.onset1 <- lm(data=df, onset~.)
 summary(lm.onset1)
@@ -1108,7 +1106,46 @@ summary(lm.onset3)
 # p-value: 6.588e-13
 
 ```
+This is our best model
 
+**Predicting daytime sleep:**
+```{r}
+lm.daysleep1 <- lm(data=df, daysleep~.-totalsleep)
+summary(lm.daysleep1)
+# Residual standard error: 41.62 on 214 degrees of freedom
+# Adjusted R-squared:  0.1404 
+# p-value: 5.166e-06
+```
+No significant variables, I will take the most significant (< 0.2)
+for the next model
+
+```{r}
+lm.daysleep2 <- lm(data=df, daysleep~age+sex+tv)
+summary(lm.daysleep2)
+# Residual standard error: 40.55 on 471 degrees of freedom
+# Adjusted R-squared:  0.2564 
+# p-value: < 2.2e-16
+```
+All significant variables
+  
+```{r}
+lm.daysleep3 <- lm(data=df, daysleep~age_category+sex+tv)
+summary(lm.daysleep3)  
+# Residual standard error: 40.06 on 469 degrees of freedom
+# Adjusted R-squared:  0.2743 
+# p-value: < 2.2e-16
+```
+Slightly improved r-squared, all variables are still significant (p<0.05)
+This is our best model
+
+```{r}
+lm.daysleep4 <- lm(data=df, daysleep~age_category*tv+sex)
+summary(lm.daysleep4)  
+# Residual standard error: 40.08 on 466 degrees of freedom
+# Adjusted R-squared:  0.2735 
+# p-value: < 2.2e-16
+```
+Slightly worsened adjusted r-squared and more complex model
 
 ## Multivariate Multiple Regression
 
@@ -1129,6 +1166,118 @@ summary(lm.all1)
 
 ## Path Analysis
 
+We need to know how many samples are in the correlations, so I am going to run one of the models to determine how many
+samples are deleted due to missingness.
+```{r error=TRUE}
+lm1 <- lm(data=df, ntsleep~daysleep+wake+onset+age+tv+screentime)
+summary(lm1)
+# 490 samples deleted, 715-490 = 225 samples
+n_samples = 225
+```
 
-# Appendix
+```{r error=TRUE}
+install.packages('lavaan')
+require(lavaan)
+correlations <- cor(df_nocat, use = "complete.obs")
+correlations
+model1 <- 'ntsleep~daysleep+wake+onset+age+tv+screentime
+daysleep~ntsleep+wake+onset+age+tv+screentime
+wake~ntsleep+daysleep+onset+age+tv+screentime
+onset~ntsleep+daysleep+wake+age+tv+screentime'
+results1<-sem(model1,sample.cov=correlations,sample.nobs=n_samples)
+```
 
+
+This error is the result of a poor model, because it cannot have features mutually relying on
+each other. Unfortunately, this is what I thought was the best part of doing a path
+analysis. For example, we cannot have ntsleep~daysleep+etc and daysleep~ntsleep+etc
+Although I understand how this is predictably very difficult, that would help us simulate
+real data.
+
+More complex models were not working, so I started by simplifying the model significantly...
+```{r}
+model2 <- 'ntsleep~daysleep+wake+onset+age+tv+screentime
+daysleep~ntsleep+wake'
+results2<-sem(model2,sample.cov=correlations,sample.nobs=n_samples)
+summary(results2,standardized=T,fit=T,rsquare=T)
+# R-Square:
+# ntsleep           0.442
+# daysleep          0.009
+
+model3 <- 'ntsleep~daysleep+wake+onset+age+tv+screentime
+wake~ntsleep+daysleep+onset'
+results3<-sem(model3,sample.cov=correlations,sample.nobs=n_samples)
+summary(results3,standardized=T,fit=T,rsquare=T)
+# R-Square:
+# ntsleep           0.435
+# wake             -0.004
+
+model4 <- 'ntsleep~daysleep+wake+onset+age+tv+screentime
+onset~ntsleep+daysleep+wake'
+results4<-sem(model4,sample.cov=correlations,sample.nobs=n_samples)
+summary(results4,standardized=T,fit=T,rsquare=T)
+# R-Square:
+# ntsleep           0.441
+# onset             0.000
+```
+
+Making a more complex model
+```{r}
+model5 <- 'ntsleep~daysleep+wake+onset+age+tv+screentime
+daysleep~wake+onset+age+tv+screentime
+wake~onset+age+tv+screentime
+onset~age+tv+screentime'
+results5<-sem(model5,sample.cov=correlations,sample.nobs=n_samples)
+summary(results5,standardized=T,fit=T,rsquare=T)
+
+# R-Square:
+# ntsleep           0.443
+# daysleep          0.243
+# wake              0.109
+# onset             0.018
+```
+
+Although these results are not "bad," looking deeper at the insignificant
+results shows us that each of the outcome variables is not a significant
+feature in other predictions. In other words, daysleep, wake, and onset
+(theoretically predictor AND outcome variables) are not significant
+when performing a linear regression predicting ntsleep.
+
+
+# Discussion
+
+Performing a simulated analysis on this data was difficult given a number of
+factors: 
+1. NA values significantly decreased sample size
+2. We cannot be sure what software was used in the original article
+3. A mix of categorical and numeric variables made some analyses impossible 
+  * e.g. Path analysis with lavaan package and age_category as predictor variable
+  
+After simulating the data and reading the article, I believe that ntsleep is one
+of the most important outcome variables. This is because it comprises the majority 
+of an infants time asleep. 
+
+For this reason, I believe that **lm.ntsleep4 is the most important**. Of note, 
+it was much easier to explain the variance in the data when using screentime as an
+outcome variable instead of a predictor variable as originally stipulated by the 
+article. This is because the r-squared values when predicting screentime are much
+higher than when predicting any of the intended outcome variables.
+
+Although the path analysis did not work out as intended, I believe it is possible to 
+simulate the article's path analysis figure (Figure 1.) simply using the correlation
+matrix data. 
+
+Here is a simulated version of what the correlations between our variables tells us...
+![Simulated Path Analysis Visualization](path_image.png)
+
+This image shows us that my data is significantly more correlated than the original data which had much fewer significant correlations between variables. The original path only has significant correlations between the following features: 
+* Tablet use and night-time sleep duration, daytime sleep duration, and sleep latency
+* TV exposure and daytime sleep duration
+* Age and night-time sleep duration, daytime sleep duration, and frequency of night-time awakenings
+* Sex and daytime sleep duration
+
+Additionally, my correlations are generally much stronger than what is seen in the original data. These extra correlations and stronger correlations are reasonable, because the original data probably contain much more randomness from external factors (genetics, environment, etc), than mine do. 
+
+Unfortunately, two of the simulated correlations are opposite from the original correlations. For example, tablet use vs daytime sleep is originally positively correlated (r=0.14) while my simulation shows a negative correlation (r=-0.15). A similar issue regarding opposite correlations is seen between TV exposure and daytime sleep duration (original r=-0.09, simulated 0.12).  
+
+To conclude, the simulated data shows significant correlations between much of these variables, showing that they are interconnected in predicting the outcome of worsened sleep habits. 
