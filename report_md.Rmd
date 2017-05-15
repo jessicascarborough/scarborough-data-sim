@@ -1248,6 +1248,7 @@ when performing a linear regression predicting ntsleep.
 
 Performing a simulated analysis on this data was difficult given a number of
 factors: 
+
 1. NA values significantly decreased sample size
 2. We cannot be sure what software was used in the original article
 3. A mix of categorical and numeric variables made some analyses impossible 
@@ -1264,19 +1265,20 @@ article. This is because the r-squared values when predicting screentime are muc
 higher than when predicting any of the intended outcome variables.
 
 Although the path analysis did not work out as intended, I believe it is possible to 
-simulate the article's path analysis figure (Figure 1.) simply using the correlation
-matrix data. 
+simulate the article's path analysis figure (Figure 1.) *simply using the correlation
+matrix data*. 
 
 Here is a simulated version of what the correlations between our variables tells us...
 ![Simulated Path Analysis Visualization](path_image.png)
 
 This image shows us that my data is significantly more correlated than the original data which had much fewer significant correlations between variables. The original path only has significant correlations between the following features: 
+
 * Tablet use and night-time sleep duration, daytime sleep duration, and sleep latency
 * TV exposure and daytime sleep duration
 * Age and night-time sleep duration, daytime sleep duration, and frequency of night-time awakenings
 * Sex and daytime sleep duration
 
-Additionally, my correlations are generally much stronger than what is seen in the original data. These extra correlations and stronger correlations are reasonable, because the original data probably contain much more randomness from external factors (genetics, environment, etc), than mine do. 
+Additionally, **my correlations are generally much stronger than what is seen in the original data**. These extra correlations and stronger correlations are reasonable, because the *original data probably contain much more randomness* from external factors (genetics, environment, etc), than mine do. 
 
 Unfortunately, two of the simulated correlations are opposite from the original correlations. For example, tablet use vs daytime sleep is originally positively correlated (r=0.14) while my simulation shows a negative correlation (r=-0.15). A similar issue regarding opposite correlations is seen between TV exposure and daytime sleep duration (original r=-0.09, simulated 0.12).  
 
